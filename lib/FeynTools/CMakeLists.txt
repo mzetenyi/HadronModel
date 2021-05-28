@@ -1,7 +1,32 @@
-add_library(FeynTools Config.cpp halfint.cpp HelicityAmplitudes.cpp Histogram.cpp MultiArray.cpp 
-    RandomNumberGenerator.cpp Spinors.cpp udouble.cpp units.cpp utils.cpp Vectors.cpp wavefunc.cpp
-    Config.hpp halfint.hpp HelicityAmplitudes.hpp Histogram.hpp MultiArray.hpp RandomNumberGenerator.hpp 
-    Spinors.hpp udouble.hpp units.hpp utils.hpp Vectors.hpp wavefunc.hpp
-    )
+set(SOURCES
+    Config.cpp
+    Config.hpp
+    halfint.cpp
+    halfint.hpp
+    HelicityAmplitudes.cpp
+    HelicityAmplitudes.hpp
+    Histogram.cpp
+    Histogram.hpp
+    MultiArray.cpp
+    MultiArray.hpp
+    RandomNumberGenerator.cpp
+    RandomNumberGenerator.hpp
+    Spinors.cpp
+    Spinors.hpp
+    udouble.cpp
+    udouble.hpp
+    units.cpp
+    units.hpp
+    utils.cpp
+    utils.hpp
+    Vectors.cpp
+    Vectors.hpp
+    wavefunc.cpp
+    wavefunc.hpp
+)
+
+add_library(FeynTools ${SOURCES})
 
 target_include_directories(FeynTools PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+set_property(TARGET FeynTools PROPERTY CXX_STANDARD 11)
