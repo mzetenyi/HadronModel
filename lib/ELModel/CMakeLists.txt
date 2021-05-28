@@ -7,6 +7,5 @@ set(SOURCES
 
 add_library(ELModel ${SOURCES})
 
-target_include_directories(ELModel PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
+target_include_directories(ELModel PUBLIC ../FeynTools)
 set_property(TARGET ELModel PROPERTY CXX_STANDARD 11)
