@@ -4,4 +4,4 @@ cd ../../..
 
 mkdir -p HadronModelResults/
 
-HadronModel/_build/exec/pi-N/piN_Ndilep load[HadronModel/lib/ELmodel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 Born N1440 N1520 N1535 res_rhophase=90 dM=0.001 gamma rho > HadronModelResults/piN_Ndilep_dsig_dM_srt1.49_90deg
+HadronModel/_build/exec/pi-N/piN_Ndilep load[HadronModel/lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 Born N1440 N1520 N1535 res_rhophase=90 dM=0.001 gamma rho > HadronModelResults/piN_Ndilep_dsig_dM_srt1.49_90deg
