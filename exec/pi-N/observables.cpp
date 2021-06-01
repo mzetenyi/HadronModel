@@ -2,6 +2,7 @@
 
 #include "Config.hpp"
 #include "units.hpp"
+#include "utils.hpp"
 
 using namespace units_GeV;
 
@@ -11,7 +12,7 @@ Observable_Xsec_Dilepton_dcosth_dphi::Observable_Xsec_Dilepton_dcosth_dphi(doubl
   phi(phi),
   obs(idx_s1,idx_s1) {
   double sinth = sqrt(1.-costh*costh);
-  double fac = M*M;
+  double fac = e*e/(M*M);
   obs( _1, _1) =   fac * (1. + costh*costh);
   obs( _1, _0) = - fac * sqrt(2.)*costh*sinth*exp(-i_*phi);
   obs( _1,-_1) =   fac * sinth*sinth*exp(-2.*i_*phi);
@@ -32,7 +33,7 @@ Observable_Xsec_Dilepton_dcosth::Observable_Xsec_Dilepton_dcosth(double M, doubl
   costh(costh),
   obs(idx_s1,idx_s1) {
   double sinth = sqrt(1.-costh*costh);
-  double fac = 2.*pi_ * M*M;
+  double fac = 2.*pi_ * e*e/(M*M);
   obs( _1, _1) = fac * (1. + costh*costh);
   obs( _1, _0) = 0;
   obs( _1,-_1) = 0;
@@ -51,7 +52,7 @@ dcomplex Observable_Xsec_Dilepton_dcosth::operator()(halfint lap, halfint la) co
 Observable_Xsec_Dilepton::Observable_Xsec_Dilepton(double M) :
   M(M),
   obs(idx_s1,idx_s1) {
-  double fac = 2.*pi_ * 8./3. * M*M;
+  double fac = 2.*pi_ * 8./3. * e*e/(M*M);
   obs( _1, _1) = fac;
   obs( _1, _0) = 0;
   obs( _1,-_1) = 0;
@@ -76,7 +77,7 @@ Observable_Xsec_Pionpair_dcosth_dphi::Observable_Xsec_Pionpair_dcosth_dphi(doubl
   double mpi = Config::get<double>("pi_pm.mass");
   double grho = Config::get<double>("grho");
   double grho_tilde = Config::get<double>("grho_tilde");
-  double corrfac = POW<2>(grho/(e*e)); // remove the rho-gamma transition vertex from piN_Ngammastar - must use the rho (and not rho2) contrib!
+  double corrfac = POW<2>(grho/(e*M*M)); // remove the rho-gamma transition vertex and photon propagator from piN_Ngammastar - must use the rho (and not rho2) contrib!
   corrfac *= sqrt(1. - 4.*mpi*mpi/(M*M)); // correct for difference in phase-space factor abs(q_pi) or abs (q_e)
   const double delta(0.2467*GeV);  // corresponds to  R = 1/delta = 0.8 fm
   double mrho = Config::get<double>("rho.mass");
@@ -107,7 +108,7 @@ Observable_Xsec_Pionpair_dcosth::Observable_Xsec_Pionpair_dcosth(double M, doubl
   double mpi = Config::get<double>("pi_pm.mass");
   double grho = Config::get<double>("grho");
   double grho_tilde = Config::get<double>("grho_tilde");
-  double corrfac = POW<2>(grho/(e*e)); // remove the rho-gamma transition vertex from piN_Ngammastar - must use the rho (and not rho2) contrib!
+  double corrfac = POW<2>(grho/(e*M*M)); // remove the rho-gamma transition vertex and photon propagator from piN_Ngammastar - must use the rho (and not rho2) contrib!
   corrfac *= sqrt(1. - 4.*mpi*mpi/(M*M)); // correct for difference in phase-space factor abs(q_pi) or abs (q_e)
   const double delta(0.2467*GeV);  // corresponds to  R = 1/delta = 0.8 fm
   double mrho = Config::get<double>("rho.mass");
@@ -136,7 +137,7 @@ Observable_Xsec_Pionpair::Observable_Xsec_Pionpair(double M) :
   double mpi = Config::get<double>("pi_pm.mass");
   double grho = Config::get<double>("grho");
   double grho_tilde = Config::get<double>("grho_tilde");
-  double corrfac = POW<2>(grho/(e*e)); // remove the rho-gamma transition vertex from piN_Ngammastar - must use the rho (and not rho2) contrib!
+  double corrfac = POW<2>(grho/(e*M*M)); // remove the rho-gamma transition vertex and photon propagator from piN_Ngammastar - must use the rho (and not rho2) contrib!
   corrfac *= sqrt(1. - 4.*mpi*mpi/(M*M)); // correct for difference in phase-space factor abs(q_pi) or abs (q_e)
   const double delta(0.2467*GeV);  // corresponds to  R = 1/delta = 0.8 fm
   double mrho = Config::get<double>("rho.mass");

@@ -216,7 +216,6 @@ double piN_Ngammastar::cutoff_sch(const std::string& res) const {
    Calculate the helicity amplitudes
 */
 HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
-  // cerr << "piN_Ngammastar::helicityAmplitudes - costh=" << costh << endl; 
   // isospin factors:
   const double isoNs = -sqrt(2.);
   const double isoNu =  sqrt(2.);
@@ -235,8 +234,6 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
   FourVector p2 = FourVector(EN_out,-kk);
   FourVector k = FourVector(k0,kk);
 
-  //  PR(p1+q-p2-k);
-
   double ch = k0/M;
   double sh = -pout_abs/M;
   FourTensor Boost = FourTensor::createUpDown( ch,  0,  0, -sh,
@@ -249,53 +246,31 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
                                              0,    0,   1,   0,
                                              0, -sinth, 0, costh );
 
-  //  PR(costh); PR(sinth); PR(costh*costh + sinth*sinth);
   FourVector ktilde(M,0,0,0);
   FourVector kprime = Boost*ktilde;
   FourVector knew = Rot*kprime;
 
-  //PR(k); PR(ktilde); PR(kprime); PR(knew);
-  
-  //  cerr << "before MultiArray<FourVector> epsRe(idx_s1);" << endl;
-  
   MultiArray<FourVector> epsRe(idx_s1);
   MultiArray<FourVector> epsIm(idx_s1);
 
-  //  cerr << "after MultiArray<FourVector> epsRe(idx_s1);" << endl;
-
   // photon wave vectors:
   FourVector epsRe0(0,0,0,1.);
-  // cerr << "a" << endl;
   FourVector epsIm0(0,0,0,0);
-  // cerr << "b" << endl;
   epsRe(_0) = Rot*Boost*epsRe0;
-  // cerr << "c" << endl;
   epsIm(_0) = Rot*Boost*epsIm0;
 
-  // cerr << "1" << endl;
-  
   FourVector epsRep(0,-1./sqrt(2.),0,0);
   FourVector epsImp(0,0,-1./sqrt(2.),0);
   epsRe(_1) = Rot*Boost*epsRep;
   epsIm(_1) = Rot*Boost*epsImp;
-  //PR(epsRep); PR(epsImp);
-  //PR(Boost*epsRep); PR(Boost*epsImp);
-  //PR(epsRe(1)); PR(epsIm(1));
-
-  // cerr << "2" << endl;
 
   FourVector epsRem(0,1./sqrt(2.),0,0);
   FourVector epsImm(0,0,-1./sqrt(2.),0);
   epsRe(-_1) = Rot*Boost*epsRem;
   epsIm(-_1) = Rot*Boost*epsImm;
-  //PR(epsRem); PR(epsImm); PR(epsRe(-1)); PR(epsIm(-1));
-
-  // cerr << "3" << endl;
 
   double uu = (p1-k)*(p1-k);
   double tt = (p1-p2)*(p1-p2);
-
-  // cerr << "4" << endl;
 
   // form factors for Born terms:
   double F1 = 1.;
@@ -303,10 +278,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
   double F3 = 1.;
   double Ftilde = 1.;
 
-  // cerr << "5" << endl;
-
   if (not Config::exists("noBornCutoff")) {
-    //    cerr << "CUTOFF" << endl;
     double LBorn = 0.63; // from Zetenyi, Wolf PRC 2012
     if (Config::exists("LBorn")) {
       LBorn = Config::get<double>("LBorn");
@@ -317,29 +289,9 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     F3 = 1./(1 + POW<2>(tt-mpi2)/POW<4>(LBorn));
     Ftilde = F1 + F2 + F3 - F1*F2 - F1*F3 - F2*F3 + F1*F2*F3;
   }
-  // clog << "F1 = " << F1 << endl;
-  // clog << "F2 = " << F2 << endl;
-  // clog << "F3 = " << F3 << endl;
-  // clog << "F4 = " << F3 << endl;
-  // clog << "Ftilde = " << Ftilde << endl;
-  //  if (uu>0) PR(uu);
-
-  // cerr << "6" << endl;
-
-  //  cerr << "BWratio = " << (2.*real(BWs*conj(BWu))) / (BWs*conj(BWs)) << endl;
-  //PR(BW(uu,mr,Gr)*conj(BW(uu,mr,Gr)));
-
-  /*
-    PR(p1*q) PR(p1*p2) PR(q*k);
-
-    PR(p1) PR(p2) PR(q) PR(k);
-  */
-  //  cerr << "before MultiArray<dcomplex> Mhad(CH.getIdx(),idx_s1h,idx_s1h,idx_lor);" << endl;
 
   MultiArray<dcomplex> Mhad(NIch.getIdx(),NIem.getIdx(),idx_s1h,idx_s1h,idx_lor);
 
-  //  cerr << "after MultiArray<dcomplex> Mhad(CH.getIdx(),idx_s1h,idx_s1h,idx_lor);" << endl;
-  
   ubar_ ubar(half,p2);
   u_ u(half,p1);
 
@@ -357,12 +309,8 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
   const double kan = Config::get<double>("ka_nngamma");
   const double kap = Config::get<double>("ka_ppgamma");
   const double kar = Config::get<double>("ka_NNrho");
-  // const double kan = 0;
-  // const double kap = 0;
-  // const double kar = 0;
   const double f_NNpi = Config::get<double>("f_NNpi");
   const double grho_tilde = Config::get<double>("grho_tilde");
-
 
   for (uint i(1); i<=5; i++) {
     Agamma[i] = Arho[i] = 0.;
@@ -400,9 +348,6 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
       Arho[1] += (- 2.*mn*(-kar*F1/(s-mn2) + kar*F2/(uu-mn2)) - (-kar*F1 + kar*F2)/(2.*mn)) * F_rho/2.;
       Arho[3] += -2.*kar*F1/(s-mn2) * F_rho/2.;
       Arho[4] += 2.*kar*F2/(uu-mn2) * F_rho/2.;
-      // Arho[1] += kar/(2.*mn)*(F2-F1) + 2.*mn*kar*(F2/(uu-mn2)-F1/(s-mn2)) * F_rho;
-      // Arho[3] += 2.*kar*F1/(s-mn2) * F_rho;
-      // Arho[4] += 2.*kar*F2/(uu-mn2) * F_rho;
     }
   }
 
@@ -417,25 +362,8 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
       Arho[1] += (- 2.*mn*(-kar*F1/(s-mn2) + kar*F2/(uu-mn2)) - (-kar*F1 + kar*F2)/(2.*mn)) * (mrho*mrho/M2)*F_rho/2.;
       Arho[3] += -2.*kar*F1/(s-mn2) * (mrho*mrho/M2)*F_rho/2.;
       Arho[4] += 2.*kar*F2/(uu-mn2) * (mrho*mrho/M2)*F_rho/2.;
-      // Arho[1] += kar/(2.*mn)*(F2-F1) + 2.*mn*kar*(F2/(uu-mn2)-F1/(s-mn2)) * F_rho;
-      // Arho[3] += 2.*kar*F1/(s-mn2) * F_rho;
-      // Arho[4] += 2.*kar*F2/(uu-mn2) * F_rho;
     }
   }
-  
-// if (rho) {
-  //   A[1] += (kar/(2.*mn)*(F2-F1)
-  //            + 2.*mn*(1.+kar)*(F2/(uu-mn2) - F1/(s-mn2))) * F_rho;
-  //   A[2] += - 4.*mn*Ftilde/(uu-mn2)/(tt-mpi2) * F_rho;
-  //   A[3] += 2.*kar*F1/(s-mn2) * F_rho;
-  //   A[4] += - 2.*kar*F2/(uu-mn2) * F_rho;
-  //   A[5] += 4.*mn*Ftilde/(s-mn2)/(tt-mpi2) * F_rho;
-  // }
-  // clog << "theta=" << acos(costh) << "   A1 = " << Arho[1] << endl;
-  // clog << "theta=" << acos(costh) << "   A2 = " << Arho[2] << endl;
-  // clog << "theta=" << acos(costh) << "   A3 = " << Arho[3] << endl;
-  // clog << "theta=" << acos(costh) << "   A4 = " << Arho[4] << endl;
-  // clog << "theta=" << acos(costh) << "   A5 = " << Arho[5] << endl;
   
   dcomplex Born_rhofac(1.);
   if (Config::exists("Bornrhophase")) {
@@ -447,7 +375,6 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     Agamma[j] *= e*f_NNpi*sqrt(2)/mpi;
     Arho[j]   *= e*f_NNpi*sqrt(2)/mpi * Born_rhofac;
   }
-  //  clog << "factor = " << e*f_NNpi*iso/mpi << endl; // The factor e*f_NNpi*iso/mpi = 2.97634
 
   for (halfint la1 : {-half,half}) {
     for (halfint la2 : {-half,half}) {
@@ -457,38 +384,12 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
             Mhad(NIch(ch),NIem(emch),la1,la2,mu) = 0;
           }
         }
-        //         cerr << "Mhad init OK" << endl;
         //------------  Born terms  ------------------------------
         if (Born) {
           for (int j(1); j<=5; j++) {
             if (gamma)       Mhad(NIch("Born"),NIem("gamma"),la1,la2,mu) += ubar(0,la2) * Agamma[j] * M_(_1*j,mu) * u(0,la1);
             if (rho or rho2) Mhad(NIch("Born"),NIem("rho"),la1,la2,mu)   += ubar(0,la2) *   Arho[j] * M_(_1*j,mu) * u(0,la1);
           }
-          //clog << "Mhad(Born,rho" << la1 << "," << la2 << "," << mu << ") = " << Mhad(NIch("Born"),NIem("rho"),la1,la2,mu) << endl;
-          // if (Config::exists("density_matrix")) {
-          //   dcomplex MBorn = Mhad(CH("Born"),la1,la2,mu);
-          //   BornTerms BT(p1,+1,q,-1,-k);
-            
-          //   dcomplex MBorn_s = ubar(0,la2) * BT.Tgamma_s(mu) * u(0,la1);
-          //   dcomplex MBorn_u = ubar(0,la2) * BT.Tgamma_u(mu) * u(0,la1);
-          //   dcomplex MBorn_t = ubar(0,la2) * BT.Tgamma_t(mu) * u(0,la1);
-          //   dcomplex MBorn_c = ubar(0,la2) * BT.Tgamma_c(mu) * u(0,la1);
-          //   dcomplex MBorn_corr = ubar(0,la2) * BT.Tgamma_corr(mu) * u(0,la1);
-          //   dcomplex MBorn_gamma = ubar(0,la2) * BT.Tgamma_all(mu) * u(0,la1);
-          //   dcomplex MBorn_rho = ubar(0,la2) * BT.Trho_all(mu) * u(0,la1);
-          //   dcomplex MBorn_sum = MBorn_s + MBorn_u + MBorn_t + MBorn_c + MBorn_corr;            
-
-          //   clog << "Born       = " << MBorn << endl;
-          //   clog << "Born_gamma = " << MBorn_gamma << endl;
-          //   clog << "Born_rho   = " << MBorn_rho << endl;
-          //   clog << "Born_all   = " << MBorn_gamma + MBorn_rho << endl;
-          //   clog << "Born_sum = " << MBorn_sum << endl;
-          //   clog << "Born_s = " << MBorn_s << endl;
-          //   clog << "Born_u = " << MBorn_u << endl;
-          //   clog << "Born_t = " << MBorn_t << endl;
-          //   clog << "Born_c = " << MBorn_c << endl;
-          //   clog << "Born_corr = " << MBorn_corr << endl;
-          // }
         }
         //------------  Born terms separately --------------------
         if (Born_s) { // s-channel
@@ -503,10 +404,8 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
         }
         if (Born_u) { // u-channel
           if (gamma) {
-            //cerr << "Mhad(Born_u,gamm," << la1 << "," << la2 << "," << mu << ") : " << Mhad(NIch("Born_u"),NIem("gamma"),la1,la2,mu);
             Mhad(NIch("Born_u"),NIem("gamma"),la1,la2,mu) += F2 * ubar(0,la2) * vertexNNpi(q,1,-1) *
               fprop(p1-k,mn) * vertexNNgamma(mu, 1, -k) * u(0,la1);
-            //cerr << "  ->  " << Mhad(NIch("Born_u"),NIem("gamma"),la1,la2,mu) << endl;
           }
           if (rho) {
             Mhad(NIch("Born_u"),NIem("rho"),la1,la2,mu) += F2 * ubar(0,la2) * vertexNNpi(q,1,-1) *
@@ -589,11 +488,9 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
               exit(0);
             }
             dcomplex fac = 1.;
-            //cerr << "phase exists: " << Config::exists(res+".phase") << endl;
             if (Config::exists(res+".phase")) {
               double phase = Config::get<double>(res+".phase"); // phase in degrees
               fac = cos(phase*pi_/180.) + i_*sin(phase*pi_/180.);
-              //cerr << "phase = " << phase << "fac = " << fac << endl;
             }
             dcomplex rhofac(1.);
             if (Config::exists(res+".rhophase")) {
@@ -797,23 +694,18 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     } // for (halfint la2 : {-half,half})
   } // for (halfint la1 : {-half,half})
 
-    //  cerr << "before HelicityAmplitudes HA({half,half,_1}, channels);" << endl;
-  
   HelicityAmplitudes HA({half,half,_1}, {channels,EMchannels});
   for (halfint la1 : {-half,half}) {
     for (halfint la2 : {-half,half}) {
       for (halfint la : {-_1,_0,_1}) {
         for (string ch : channels) {
           for (string emch : EMchannels) {
-            //          cerr << "before HA(name,{la1,la2,la}) = 0;" << endl;
             HA({ch,emch},{la1,la2,la}) = 0;
-            //          cerr << "after HA(name,{la1,la2,la}) = 0;" << endl;
             for (halfint mu(0); mu<4; mu++) {
-              //cerr << "HA(" << ch << "," << emch << "," << la1 << "," << la2 << "," << la << ") : " << HA({ch,emch},{la1,la2,la});
               HA({ch,emch},{la1,la2,la}) +=
-                //Mhad(NIch(ch),NIem(emch),la1,la2,mu) * k(mu) * sign_(mu); // for checking gauge inveriance
-                e/M2 * Mhad(NIch(ch),NIem(emch),la1,la2,mu) * (epsRe(la)(mu)-i_*epsIm(la)(mu)) * sign_(mu);
-              //cerr << "  ->  " << HA({ch,emch},{la1,la2,la}) << endl;
+                //Mhad(NIch(ch),NIem(emch),la1,la2,mu) * k(mu) * sign_(mu); // for checking gauge invariance
+                Mhad(NIch(ch),NIem(emch),la1,la2,mu) * (epsRe(la)(mu)-i_*epsIm(la)(mu)) * sign_(mu);
+               // e/M2 * Mhad(NIch(ch),NIem(emch),la1,la2,mu) * (epsRe(la)(mu)-i_*epsIm(la)(mu)) * sign_(mu);
             }
           }
         }
