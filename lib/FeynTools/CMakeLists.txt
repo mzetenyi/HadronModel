@@ -25,6 +25,7 @@ set(SOURCES
     wavefunc.hpp
 )
 
+add_compile_options(-O3)
 add_library(FeynTools ${SOURCES})
 
 target_include_directories(FeynTools PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
