@@ -6,3 +6,11 @@ target_include_directories(piN_Ndilep PUBLIC ../../lib/FeynTools ../../lib/ELMod
 
 target_link_libraries(piN_Ndilep FeynTools)
 target_link_libraries(piN_Ndilep ELModel)
+
+add_executable(piN_Npipi BornTerms.cpp  cutoffs.cpp  observables.cpp  piN_Npipi.cpp  piN_Npipi_main.cpp  piN_Ngammastar.cpp 
+    BornTerms.hpp  cutoffs.hpp  observables.hpp  piN_Npipi.hpp  piN_Ngammastar.hpp)
+
+target_include_directories(piN_Npipi PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_link_libraries(piN_Npipi FeynTools)
+target_link_libraries(piN_Npipi ELModel)
