@@ -108,8 +108,6 @@ private:
 
 template <class Observable>
 MultiArray<double> piN_Ngammastar::partialExpectationValues(double costh, const Observable& OBS) const {
-  int npol = 2;
-  double fac = 1./(64.*POW<4>(2.*pi_)*s) * pout_abs/pin_abs * M * 1./npol;
   MultiArray<double> PartExpVal({NIch,NIem});
   HelicityAmplitudes HA = helicityAmplitudes(costh);
   for (auto R : channels) {
@@ -126,7 +124,7 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(double costh, const 
                     + HA({Rp,alp},{la1,la2,la}) * conj(HA({R,al},{la1,la2,lap}));
                 }
               }
-              O_Ral += 1./2. * fac * rho_la_lap * OBS(lap,la);
+              O_Ral += 1./2. * rho_la_lap * OBS(lap,la);
             }
           }
         }
@@ -140,9 +138,6 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(double costh, const 
 
 template <class Observable>
 MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OBS) const {
-  int npol = 2;
-  double fac = 1./(64.*POW<4>(2.*pi_)*s) * pout_abs/pin_abs * M * 1./npol;
-  //  cerr << "fac = " << fac << endl;
   MultiArray<double> PartExpVal({NIch,NIem});
 
   uint nth(20);
@@ -174,7 +169,7 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OB
                       + HA({Rp,alp},{la1,la2,la}) * conj(HA({R,al},{la1,la2,lap}));
                   }
                 }
-                O_Ral += 1./2. * fac * rho_la_lap * OBS(lap,la);
+                O_Ral += 1./2. * rho_la_lap * OBS(lap,la);
                 //      O_Ral_test += 1./2. * rho_la_lap * OBS(lap,la);
                 //cerr << "O_Ral/O_Ral_test = " << O_Ral/O_Ral_test << endl;
               }
@@ -202,6 +197,8 @@ udouble piN_Ngammastar::expectationValue(double costh, const Observable& OBS) co
   //     cerr << R << al << " -> " << PartExpVal(NIch(R),NIem(al)) << endl;
   //   }
   // }
+  int npol = 2;
+  double fac = 1./(32.*pi_*s) * pout_abs/pin_abs * 1./npol; // factor for cross section of piN->Ngamma*
   double expVal(0);
   double r2(0);
   for (auto R : channels) {
@@ -210,7 +207,7 @@ udouble piN_Ngammastar::expectationValue(double costh, const Observable& OBS) co
     double sum_r2O2(0);
     for (auto al : EMchannels) {
       double r = relative_errors(NIch(R),NIdec(al));
-      double O_Ral = PartExpVal(NIch(R),NIem(al));
+      double O_Ral = fac*PartExpVal(NIch(R),NIem(al));
       expVal += O_Ral;
       sum_O2 += O_Ral*O_Ral;
       sum_r2O2 += r*r * O_Ral*O_Ral;
@@ -230,6 +227,8 @@ udouble piN_Ngammastar::expectationValue(const Observable& OBS) const {
   //     cerr << R << al << " -> " << PartExpVal(NIch(R),NIem(al)) << endl;
   //   }
   // }
+  int npol = 2;
+  double fac = 1./(32.*pi_*s) * pout_abs/pin_abs * 1./npol; // factor for cross section of piN->Ngamma*
   double expVal(0);
   double r2(0);
   for (auto R : channels) {
@@ -238,7 +237,7 @@ udouble piN_Ngammastar::expectationValue(const Observable& OBS) const {
     double sum_r2O2(0);
     for (auto al : EMchannels) {
       double r = relative_errors(NIch(R),NIdec(al));
-      double O_Ral = PartExpVal(NIch(R),NIem(al));
+      double O_Ral = fac*PartExpVal(NIch(R),NIem(al));
       expVal += O_Ral;
       sum_O2 += O_Ral*O_Ral;
       sum_r2O2 += r*r * O_Ral*O_Ral;

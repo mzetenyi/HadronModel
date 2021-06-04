@@ -1,22 +1,19 @@
+#include "utils.hpp"
 #include "udouble.hpp"
 #include "piN_Ndilep.hpp"
 #include "piN_Ngammastar.hpp"
 
 udouble piN_Ndilep_dsigma_dM(double srt, double M) {
-  //  cerr << "in piN_Ndilep_dsigma_dM(double srt, double M)" << endl;
   piN_Ngammastar DS(srt,M);
-  //  cerr << "after piN_Ngammastar DS(srt,M);" << endl;
-  Observable_Xsec_Dilepton OBS(M);
-  //  cerr << "after Observable_Xsec_Dilepton OBS(M);" << endl;
-  udouble ret = DS.expectationValue(OBS);
-  //  cerr << "return from piN_Ndilep_dsigma_dM(srt,M): " << ret.get_value() << " (" << ret.get_rel_uncert() << ")" << endl;
+  Observable_Xsec_Dilepton_dM OBS(M);
+  udouble ret = M/pi_*DS.expectationValue(OBS);
   return ret;
 }
 
 udouble piN_Ndilep_dsigma_dM_dcosth(double srt, double M, double costh) {
   piN_Ngammastar DS(srt,M);
-  Observable_Xsec_Dilepton OBS(M);
-  udouble ret = DS.expectationValue(costh,OBS);
+  Observable_Xsec_Dilepton_dM OBS(M);
+  udouble ret = M/pi_*DS.expectationValue(costh,OBS);
   return ret;
 }
 

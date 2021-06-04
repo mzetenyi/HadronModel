@@ -6,7 +6,7 @@
 udouble piN_Npipi_dsigma_dM(double srt, double M) {
   piN_Ngammastar DS(srt,M);
   Observable_Xsec_Pionpair OBS(M);
-  udouble ret = DS.expectationValue(OBS);
+  udouble ret = M/pi_*DS.expectationValue(OBS);
   return ret;
 }
 
@@ -33,7 +33,7 @@ double piN_Npipi_dsigma_dM_from_dilep(double srt, double M) {
   //  double conv_fac = qe/qpi * Gamma_pipi/Gamma_ee;
   double conv_fac = Gamma_pipi/Gamma_ee;
   piN_Ngammastar DS(srt,M);
-  Observable_Xsec_Dilepton OBS(M);
+  Observable_Xsec_Dilepton_dM OBS(M);
   double ret = DS.expectationValue(OBS).get_value() * conv_fac;
   return ret;
 }

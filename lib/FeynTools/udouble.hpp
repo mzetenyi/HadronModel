@@ -10,6 +10,7 @@ public:
   double get_rel_uncert() const;
   double minimum() const;
   double maximum() const;
+  friend udouble operator*(double, const udouble&);
   friend std::ostream& operator<<(std::ostream&, const udouble&);
 private:
   double value;

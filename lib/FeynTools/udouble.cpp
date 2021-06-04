@@ -25,6 +25,10 @@ double udouble::maximum() const {
   return value*(1. + rel_uncert);
 }
 
+udouble operator*(double x, const udouble& u) {
+  return udouble(x*u.value,u.rel_uncert);
+}
+
 ostream& operator<<(ostream& out, const udouble& ud) {
   out << setw(14) << ud.value
       << setw(14) << ud.rel_uncert 
