@@ -70,5 +70,11 @@ private:
   MultiArray<dcomplex> obs; 
 };
 
+class Observable_Xsec_PionPhotoprod {
+public:
+  Observable_Xsec_PionPhotoprod();
+  dcomplex operator()(halfint lap, halfint la) const;
+};
+
 
 #endif // OBSERVABLES_HPP

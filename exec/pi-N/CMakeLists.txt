@@ -14,3 +14,12 @@ target_include_directories(piN_Npipi PUBLIC ../../lib/FeynTools ../../lib/ELMode
 
 target_link_libraries(piN_Npipi FeynTools)
 target_link_libraries(piN_Npipi ELModel)
+
+add_executable(pionPhotoprod BornTerms.cpp  cutoffs.cpp  observables.cpp  pionPhotoprod.cpp  pionPhotoprod_main.cpp  piN_Ngammastar.cpp 
+    BornTerms.hpp  cutoffs.hpp  observables.hpp  pionPhotoprod.hpp  piN_Ngammastar.hpp)
+
+target_include_directories(pionPhotoprod PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_link_libraries(pionPhotoprod FeynTools)
+target_link_libraries(pionPhotoprod ELModel)
+

@@ -166,3 +166,8 @@ dcomplex Observable_Xsec_Pionpair::operator()(halfint lap, halfint la) const {
   return obs(lap,la);
 }
 
+Observable_Xsec_PionPhotoprod::Observable_Xsec_PionPhotoprod() {}
+  
+dcomplex Observable_Xsec_PionPhotoprod::operator()(halfint lap, halfint la) const {
+  return delta_(la,lap);
+}
