@@ -32,3 +32,5 @@
 *.app
 
 _build
+
+exec/pi-N/results
