@@ -22,7 +22,7 @@ set nokey
 set style fill transparent pattern 6 border 
 
 #set out "piNdilep_dsig_dM_srt1.49_rs1_newsign.pdf"
-set out "../results/Fig3a.pdf"
+set out "../results/piN_Ndilep_dsig_dM_srt1.49_90deg.pdf"
 
 plot "../results/piN_Ndilep_dsig_dM_srt1.49_90deg" using 1:4:5 title "all" with filledcurves fs solid 0.3 ls 8,\
      "../results/piN_Ndilep_dsig_dM_srt1.49_90deg" using 1:4 notitle ls 8 lw 1, "" using 1:5 notitle ls 8 lw 1
