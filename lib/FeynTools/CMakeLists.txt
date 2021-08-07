@@ -7,6 +7,8 @@ set(SOURCES
     HelicityAmplitudes.hpp
     Histogram.cpp
     Histogram.hpp
+    Kinema.hpp
+    Kinema.cpp
     MultiArray.cpp
     MultiArray.hpp
     RandomNumberGenerator.cpp

@@ -42,6 +42,7 @@ double cutoff_RNpi(const string& resonance, double srt) {
   double Gamma_Npi = Gamma_r*BNpi;
   double q2 = lambda(srt*srt, mn*mn, mpi*mpi)/(4.*srt*srt);
   string cutType = Config::get<string>("cutoff");
+  if (cutType == "none") return 1.;
   if (cutType == "Rapp") {
     return cutoffRapp(spin,q2);
   } else if (cutType == "ZM") {

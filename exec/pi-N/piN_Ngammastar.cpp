@@ -191,7 +191,7 @@ double piN_Ngammastar::cutoff_sch(const std::string& res) const {
       //      double qrho2(pout_abs*pout_abs);
       //      return cutoffRapp(spin,qpi2) * cutoffRapp(spin,qrho2);
       return cutoffRapp(spin,qpi2);
-    } else {
+    } else if (Config::get<string>("cutoff")=="ZM")  {
       double mr2(mr*mr);
       double delta2;
       double Gamma_r = Gr*BNpi;
@@ -205,6 +205,8 @@ double piN_Ngammastar::cutoff_sch(const std::string& res) const {
       double q2(pin_abs*pin_abs);
       double q02 = lambda(mr2,mn2,mpi2)/(4.*mr2);
       return pow((q02+delta2)/(q2+delta2), (l+1.)/2.) * sqrt(mr/srt);
+    } else {
+      return 1;
     }
   }
   return 1.;

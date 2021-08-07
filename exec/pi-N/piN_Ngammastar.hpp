@@ -174,12 +174,17 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OB
           for (auto alp : EMchannels) {
             for (halfint la : {-_1,_0,_1}) {
               for (halfint lap : {-_1,_0,_1}) {
+//            for (halfint la : {-_1,_1}) {
+//              for (halfint lap : {-_1,_1}) {
                 dcomplex rho_la_lap(0);
                 for (halfint la1 : {-half,half}) {
                   for (halfint la2 : {-half,half}) {
                     rho_la_lap += HA({R,al},{la1,la2,la}) * conj(HA({Rp,alp},{la1,la2,lap}))
                       + HA({Rp,alp},{la1,la2,la}) * conj(HA({R,al},{la1,la2,lap}));
                   }
+                }
+                if (Config::exists("constAmpl")) {
+                  rho_la_lap = (la==lap) ? 1 : 0;
                 }
                 O_Ral += 1./2. * rho_la_lap * OBS(lap,la);
                 //      O_Ral_test += 1./2. * rho_la_lap * OBS(lap,la);
@@ -233,7 +238,8 @@ udouble piN_Ngammastar::expectationValue(double costh, const Observable& OBS) co
 template <class Observable>
 udouble piN_Ngammastar::inverseExpectationValue(double costh, const Observable& OBS) const {
   int npol = 4; // No. of pol. states in gamma+N (real photons, no longi pol!)
-  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of piN->Ngamma*
+  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of gammaN->Npi
+
   return fac*bareExpectationValue(costh,OBS);
 }
   
@@ -275,7 +281,7 @@ udouble piN_Ngammastar::expectationValue(const Observable& OBS) const {
 template <class Observable>
 udouble piN_Ngammastar::inverseExpectationValue(const Observable& OBS) const {
   int npol = 4; // No. of pol. states in gamma+N (real photons, no longi pol!)
-  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of piN->Ngamma*
+  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of gammaN->Npi
   return fac*bareExpectationValue(OBS);
 }
 

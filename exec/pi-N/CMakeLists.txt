@@ -23,3 +23,18 @@ target_include_directories(pionPhotoprod PUBLIC ../../lib/FeynTools ../../lib/EL
 target_link_libraries(pionPhotoprod FeynTools)
 target_link_libraries(pionPhotoprod ELModel)
 
+add_executable(pionPhotoprodAnalytic pionPhotoprodAnalytic.cpp pionPhotoprodAnalytic_main.cpp)
+
+target_include_directories(pionPhotoprodAnalytic PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_link_libraries(pionPhotoprodAnalytic FeynTools)
+target_link_libraries(pionPhotoprodAnalytic ELModel)
+
+add_executable(rhoPhase rhoPhase.cpp BornTerms.cpp  cutoffs.cpp  observables.cpp  pionPhotoprod.cpp piN_Ngammastar.cpp 
+BornTerms.hpp  cutoffs.hpp  observables.hpp  pionPhotoprod.hpp  piN_Ngammastar.hpp)
+
+target_include_directories(rhoPhase PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_link_libraries(rhoPhase FeynTools)
+target_link_libraries(rhoPhase ELModel)
+

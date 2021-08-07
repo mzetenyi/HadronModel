@@ -29,6 +29,7 @@ double Gamma_rho(double m) { ///< Mass dependence of total width = width of rho 
 }
 
 double Gamma_R(const std::string& res, double s, double m0, double G0, int l) {
+  if (Config::exists("fixedRwidth")) return G0;
   static const double mpi_pm = Config::get<double>("pi_pm.mass");
   //  static const double mpi_0 = Config::get<double>("pi_0.mass");
   //static const double mpi = (2.*mpi_pm + mpi_0)/3.;
