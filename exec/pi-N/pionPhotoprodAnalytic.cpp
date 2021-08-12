@@ -5,6 +5,10 @@
 #include "Kinema.hpp"
 #include "Vectors.hpp"
 
+#include <iostream>
+
+using namespace std;
+
 pionPhotoprodAnalytic::pionPhotoprodAnalytic(double srt)
     : srt(srt),
       mN(Config::get<double>("Nucleon.mass")),
@@ -39,29 +43,38 @@ double pionPhotoprodAnalytic::MSQR(double costh) {
   double BWs2 = POW<2>(abs(BWs));
   double fac = iso * gRNpi * gRNg / (2. * mpi * mrho);
 
-  return 128. * POW<2>(fac) * 1. / npol * BWs2 * (
-         + pi_pf * POW<2>(pi_k) * mN2 
-         + 2. * pi_pf * POW<2>(pi_k) * mR * mN 
-         + pi_pf * POW<2>(pi_k) * mR2 
-         + 2. * POW<2>(pi_k) * pf_k * mN2 
-         + 2. * POW<2>(pi_k) * pf_k * mR * mN 
-         - POW<2>(pi_k) * mN4 
-         - 2. * POW<2>(pi_k) * mR * mN3 
-         - POW<2>(pi_k) * mR2 * mN2 
-         + 2. * POW<3>(pi_k) * pf_k 
-         - 2. * POW<3>(pi_k) * mN2 
-         - 2. * POW<3>(pi_k) * mR * mN
-         );
+  double ret =
+      128. * POW<2>(fac) * 1. / npol * BWs2 *
+      (+pi_pf * POW<2>(pi_k) * mN2 + 2. * pi_pf * POW<2>(pi_k) * mR * mN +
+       pi_pf * POW<2>(pi_k) * mR2 + 2. * POW<2>(pi_k) * pf_k * mN2 +
+       2. * POW<2>(pi_k) * pf_k * mR * mN - POW<2>(pi_k) * mN4 -
+       2. * POW<2>(pi_k) * mR * mN3 - POW<2>(pi_k) * mR2 * mN2 +
+       2. * POW<3>(pi_k) * pf_k - 2. * POW<3>(pi_k) * mN2 -
+       2. * POW<3>(pi_k) * mR * mN);
+  cerr << "costh = " << costh << endl;
+  PR(mR); PR(gRNpi); PR(gRNg);
+  cerr << "fac = " << fac << endl;
+  //cerr << "BWs = " << BWs << endl;
+  cerr << "MSQR = " << ret << endl;
+  return ret;
 }
 
 double pionPhotoprodAnalytic::dsig_dcosth(double costh) {
-  return 1. / (32. * pi_ * srt * srt) * KINout.pabs() / KINin.pabs() *
-         MSQR(costh);
+  double fac = 1. / (32. * pi_ * srt * srt) * KINout.pabs() / KINin.pabs();
+  cerr << "s = " << srt*srt << endl;
+  cerr << "pout = " << KINout.pabs() << endl;
+  cerr << "pin  = " << KINin.pabs() << endl;
+  cerr << "kine fac = " << fac << endl;
+  return fac * MSQR(costh);
 };
 
 double pionPhotoprodAnalytic::sigtot() {
   double dcosth = 0.01;
   if (Config::exists("dcosth")) dcosth = Config::get<double>("dcosth");
+  if (Config::exists("nth")) {
+    int nth = Config::get<int>("nth");
+    dcosth = 2./nth;
+  }
   double sum(0);
   for (double costh(-1. + dcosth / 2.); costh < 1.; costh += dcosth) {
     sum += dsig_dcosth(costh);

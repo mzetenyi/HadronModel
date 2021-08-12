@@ -470,6 +470,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
             const double g3 = Config::get<double>(res+".g3");
             const int l = Config::get<int>(res+".l");
             const dcomplex BWs = BW(s,mr,Gamma_R(res,s,mr,Gr,l));
+            //cerr << "BWs = " << BWs << endl;
             const dcomplex BWu = BW(uu,mr,0);
             double iso_s(0);
             double iso_u(0);
@@ -507,6 +508,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
             //------------  spin-1/2  ------------------------------
             if (spin == half) {
               if (gamma) {
+                PR(mr); PR(gA); PR(g0);
                 Mhad(NIch(res),NIem("gamma"),la1,la2,mu) += 
                   fac *
                   ubar(0,la2) *
