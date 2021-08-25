@@ -1,0 +1,58 @@
+FORM 4.1 (Jan 13 2014) 64-bits                   Run: Tue Aug 24 17:29:13 2021
+    f vertexRNpi, vertexRNpiAdj;
+    f vertexRNgamma, vertexRNgammaAdj;
+    f proN, propR;
+    f T,Tadj;
+    s mR,mN,mpi;
+    s srt;
+    v pi,k,p,pf,q;
+    in l,mu;
+    
+    local MSQR = proN(l,pf)*T(l,pi,k,p,pf,q,mu)*proN(l,pi)*Tadj(l,pi,k,p,pf,q,mu);
+    
+    id T(l?,pi?,k?,p?,pf?,q?,mu?) = vertexRNpi(l,p,pf,q) * propR(l,p) * vertexRNgamm
+    a(l,p,pi,k,mu);
+    id Tadj(l?,pi?,k?,p?,pf?,q?,mu?) = vertexRNgammaAdj(l,p,pi,k,mu) * propR(l,p) * 
+    vertexRNpiAdj(l,p,pf,q);
+    
+    id vertexRNpi(l?,p?,pf?,q?) = g5_(l) * g_(l,q);
+    id vertexRNpiAdj(l?,p?,pf?,q?) = g5_(l) * g_(l,q);
+    id vertexRNgamma(l?,p?,pi?,k?,mu?) = g_(l,k,mu)-g_(l,mu,k);
+    id vertexRNgammaAdj(l?,p?,pi?,k?,mu?) = -(g_(l,k,mu)-g_(l,mu,k));
+    
+    *id proN(l?,p?) = gi_(l);
+    id proN(l?,p?) = g_(l,p) + mN*gi_(l);
+    *id propR(l?,p?) = gi_(l);
+    id propR(l?,p?) = g_(l,p) + mR*gi_(l);
+    
+    trace4,l;
+    .sort
+
+Time =       0.00 sec    Generated terms =         72
+            MSQR         Terms in output =         18
+                         Bytes used      =       1260
+    
+    id k.k=0;
+    id pi.pi=mN^2;
+    id pf.pf=mN^2;
+    id q.q=mpi^2;
+    id p.p=srt^2;
+    
+    print +s;
+    .end
+
+Time =       0.00 sec    Generated terms =          7
+            MSQR         Terms in output =          7
+                         Bytes used      =        424
+
+   MSQR =
+       + 128*pi.k*k.p*p.pf*mpi^2
+       - 256*pi.k*k.p*p.q*pf.q
+       + 128*pi.k*k.p*mR*mN*mpi^2
+       - 64*pi.k*k.pf*mpi^2*srt^2
+       + 64*pi.k*k.pf*mR^2*mpi^2
+       + 128*pi.k*k.q*pf.q*srt^2
+       - 128*pi.k*k.q*pf.q*mR^2
+      ;
+
+  0.00 sec out of 0.00 sec
