@@ -15,13 +15,13 @@ double Kinema2::E2() const { return (M * M - m1 * m1 + m2 * m2) / (2. * M); }
 FourVector Kinema2::p1(double costh, double phi) const {
   double pp = pabs();
   double sinth = sqrt(1. - costh*costh);
-  return FourVector(E1(), pp * costh * cos(phi),
-                    pp * costh * sin(phi), pp * sinth);
+  return FourVector(E1(), pp * sinth * cos(phi),
+                    pp * sinth * sin(phi), pp * costh);
 }
 
 FourVector Kinema2::p2(double costh, double phi) const {
   double pp = pabs();
   double sinth = sqrt(1. - costh*costh);
-  return FourVector(E1(), -pp * costh * cos(phi),
-                    -pp * costh * sin(phi), -pp * sinth);
+  return FourVector(E2(), -pp * sinth * cos(phi),
+                    -pp * sinth * sin(phi), -pp * costh);
 }
