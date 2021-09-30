@@ -1,11 +1,11 @@
 #include "pionPhotoprodAnalytic.hpp"
 
+#include <iostream>
+
 #include "Config.hpp"
 #include "Gamma.hpp"
 #include "Kinema.hpp"
 #include "Vectors.hpp"
-
-#include <iostream>
 
 using namespace std;
 
@@ -23,9 +23,17 @@ double pionPhotoprodAnalytic::MSQR(double costh) {
   FourVector pi = KINin.p1();
   FourVector k = KINin.p2();
   FourVector pf = KINout.p1();
+  FourVector q = KINout.p2();
+  FourVector p = pi + k;
   double pi_k = pi * k;
   double pf_k = pf * k;
   double pi_pf = pi * pf;
+  double k_p = k*p;
+  double p_pf = p*pf;
+  double k_pf = k*pf;
+  double p_q = p*q;
+  double pf_q = pf*q;
+  double k_q = k*q;
   double mN2 = mN * mN;
   double mN3 = mN2 * mN;
   double mN4 = mN3 * mN;
@@ -43,7 +51,7 @@ double pionPhotoprodAnalytic::MSQR(double costh) {
   double BWs2 = POW<2>(abs(BWs));
   double fac = iso * gRNpi * gRNg / (2. * mpi * mrho);
 
-  double ret =
+  /* double ret =
       128. * POW<2>(fac) * 1. / npol * BWs2 *
       (+pi_pf * POW<2>(pi_k) * mN2 + 2. * pi_pf * POW<2>(pi_k) * mR * mN +
        pi_pf * POW<2>(pi_k) * mR2 + 2. * POW<2>(pi_k) * pf_k * mN2 +
@@ -51,17 +59,30 @@ double pionPhotoprodAnalytic::MSQR(double costh) {
        2. * POW<2>(pi_k) * mR * mN3 - POW<2>(pi_k) * mR2 * mN2 +
        2. * POW<3>(pi_k) * pf_k - 2. * POW<3>(pi_k) * mN2 -
        2. * POW<3>(pi_k) * mR * mN);
+ */
+  double ret = +128 * pi_k * k_p * p_pf * POW<2>(mpi) -
+               256 * pi_k * k_p * p_q * pf_q +
+               128 * pi_k * k_p * mR * mN * POW<2>(mpi) -
+               64 * pi_k * k_pf * POW<2>(mpi) * POW<2>(srt) +
+               64 * pi_k * k_pf * POW<2>(mR) * POW<2>(mpi) +
+               128 * pi_k * k_q * pf_q * POW<2>(srt) -
+               128 * pi_k * k_q * pf_q * POW<2>(mR);
+
+  ret *= POW<2>(fac) * 1. / npol * BWs2;
+
   cerr << "costh = " << costh << endl;
-  PR(mR); PR(gRNpi); PR(gRNg);
+  PR(mR);
+  PR(gRNpi);
+  PR(gRNg);
   cerr << "fac = " << fac << endl;
-  //cerr << "BWs = " << BWs << endl;
+  // cerr << "BWs = " << BWs << endl;
   cerr << "MSQR = " << ret << endl;
   return ret;
 }
 
 double pionPhotoprodAnalytic::dsig_dcosth(double costh) {
   double fac = 1. / (32. * pi_ * srt * srt) * KINout.pabs() / KINin.pabs();
-  cerr << "s = " << srt*srt << endl;
+  cerr << "s = " << srt * srt << endl;
   cerr << "pout = " << KINout.pabs() << endl;
   cerr << "pin  = " << KINin.pabs() << endl;
   cerr << "kine fac = " << fac << endl;
@@ -73,7 +94,7 @@ double pionPhotoprodAnalytic::sigtot() {
   if (Config::exists("dcosth")) dcosth = Config::get<double>("dcosth");
   if (Config::exists("nth")) {
     int nth = Config::get<int>("nth");
-    dcosth = 2./nth;
+    dcosth = 2. / nth;
   }
   double sum(0);
   for (double costh(-1. + dcosth / 2.); costh < 1.; costh += dcosth) {

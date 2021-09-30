@@ -18,7 +18,7 @@ id vertexRNgamma(l?,p?,pi?,k?,mu?) = g_(l,k,mu)-g_(l,mu,k);
 id vertexRNgammaAdj(l?,p?,pi?,k?,mu?) = -(g_(l,k,mu)-g_(l,mu,k));
 
 id proN(l?,p?) = g_(l,p) + mN*gi_(l);
-id propR(l?,p?) = g_(l,p) + mR*gi_(l);
+id propR(l?,p?) = i_*(g_(l,p) + mR*gi_(l));
 
 trace4,l;
 .sort
