@@ -31,19 +31,6 @@ double formfactorRNpi(string resonance, double m) {
   return sqrt(mR/m) * pow((q0*q0+delta2)/(q*q+delta2),(l+1.)/2.);
 }
 
-DiracMatrix vertexRNpi(FourVector pR, FourVector pN, FourVector q) {
-  double isofac = sqrt(2);
-  double mpi = Config::get<double>("pi_pm.mass");
-  double g = Config::get<double>("N1440.g0");
-  return isofac*g/mpi * gamma5_ * gamma_(q);
-}
-
-DiracMatrix vertexRNgamma(FourVector pR, FourVector pN, FourVector k, uint mu) {
-  double mrho = Config::get<double>("rho.mass");
-  double g = Config::get<double>("N1440.gngamma");
-  return i_*g/(2.*mrho) * (gamma_(k) * gamma_(mu) - gamma_(mu) * gamma_(k));
-}
-
 DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1, uint muR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   int parity = Config::get<halfint>(resonance + ".parity");
@@ -80,15 +67,6 @@ DiracMatrix pro1half(FourVector p, double m) {
   return gamma_(p) + m * gamma_unit;
 }
 
-double N1440width(double srt){
-  if (Config::exists("noRwidth")) return 0;
-  if (Config::exists("constRwidth")) {
-    return Config::get<double>("N1440.width");
-  }
-  //cerr << "N1440 width not implemented, using 0" << endl;
-  return 0;
-}
-
 double resonanceWidth(string resonance, double m) {
   if (Config::exists("noRwidth")) return 0;
   double Gamma0 = Config::get<double>(resonance + ".width");
@@ -105,26 +83,22 @@ double resonanceWidth(string resonance, double m) {
   return Gamma0 * pow(q/q0,2.*l+1.) * FF*FF;
 }
 
-dcomplex BreitWigner(FourVector p, double m, double Gamma) {
+dcomplex BreitWigner(string resonance, double srt) {
   if (Config::exists("noBW")) return 1;
-  return 1./(p*p - m*m + i_*sqrt(p*p)*Gamma);
-}
-
-DiracMatrix propR(FourVector p) {
   double mR(Config::get<double>("N1440.mass"));
-  double srt = sqrt(p*p);
-  double Gamma = N1440width(srt);
-  return i_*pro1half(p,mR) * BreitWigner(p,mR,Gamma);
+  double Gamma = resonanceWidth(resonance,srt);
+  return 1./(srt*srt - mR*mR + i_*srt*Gamma);
 }
 
 DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1, uint muR2, uint nuR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   double mR = Config::get<double>(resonance + ".mass");
   double Gamma = resonanceWidth(resonance,sqrt(p*p));
+  double srt = sqrt(p*p);
   if (spin == half) {
-    return i_*pro1half(p,mR) * BreitWigner(p,mR,Gamma);
+    return i_*pro1half(p,mR) * BreitWigner(resonance,srt);
   } else if (spin == 3*half) {
-    return i_*P3h(p,mR,muR1,nuR1) * BreitWigner(p,mR,Gamma);
+    return i_*P3h(p,mR,muR1,nuR1) * BreitWigner(resonance,srt);
   } else {
     cerr << "propR: spin " << spin << " not implemented" << endl;
     exit(0);
@@ -144,11 +118,6 @@ pionPhotoprodTest::pionPhotoprodTest(double srt)
       mpi(Config::get<double>("pi_pm.mass")),
       KINin(srt, mN, 0),
       KINout(srt, mN, mpi) {
-        /*
-  PR(mR);
-  PR(mN);
-  PR(mpi);
-  */
 }
 
 double pionPhotoprodTest::MSQRraw_numeric(double costh) {
@@ -157,31 +126,15 @@ double pionPhotoprodTest::MSQRraw_numeric(double costh) {
   FourVector pf = KINout.p1(costh);
   FourVector q = KINout.p2(costh);
   FourVector p = pi + k;
-
-/*
-  PR(pi);
-  PR(k);
-  PR(pf);
-  PR(q);
-
-  PR(mpi * mpi);
-  PR(q * q);
-  PR(mN * mN);
-  PR(pi * pi);
-  PR(srt * srt);
-  PR(p * p);
-  PR(k * k);
-  PR(pf * pf);
-*/
-
   MultiArray<DiracMatrix> T(idx_lor);
   for (uint mu(0); mu < 4; mu++) {
-    if (isSet("N1440")) T(mu) += vertexRNpi("N1440",p, -pf, -q) * propR(p) * vertexRNgamma(p, pi, k, mu);
-    for (uint mu(0); mu < 4; mu++) {
-      if (isSet("N1520")) T(mu) += vertexRNpi("N1520",p, -pf, -q) * propR(p) * vertexRNgamma(p, pi, k, mu);
-
+    if (isSet("N1440")) T(mu) += vertexRNpi("N1440",p, -pf, -q) * propR("N1440",p) * vertexRNgamma("N1440",p, pi, k, mu);
+    for (uint nu1(0); nu1 < 4; nu1++) {
+      for (uint nu2(0); nu2 < 4; nu2++) {
+        if (isSet("N1520")) T(mu) += vertexRNpi("N1520",p, -pf, -q, nu1) * propR("N1520",p,nu1,nu2) * 
+          vertexRNgamma("N1520",-p, pi, k, mu, nu2);
+      }
     }
-
   }
   dcomplex MSQR(0);
   DiracMatrix GG = gamma_null;
@@ -198,13 +151,6 @@ double pionPhotoprodTest::MSQRraw_analytic(double costh) {
   FourVector pf = KINout.p1(costh);
   FourVector q = KINout.p2(costh);
   FourVector p = pi + k;
-
-/*
-  PR(pi);
-  PR(k);
-  PR(pf);
-  PR(q);
-*/
 
   double pi_pf = pi * pf;
   double pf_q = pf * q;
@@ -271,30 +217,12 @@ double pionPhotoprodTest::sigtot_numeric() {
 
 int main(int argc, char** argv) {
   Config::load(argc, argv);
-  double srt = 1.5 * GeV;
-  if (Config::exists("srt")) {
-    srt = Config::get<double>("srt");
-  }
-  double costh = 0.5;
-  if (Config::exists("costh")) {
-    costh = Config::get<double>("costh");
-  }
-  pionPhotoprodTest PPT(srt);
-  double MSQR_numeric = PPT.MSQRraw_numeric(costh);
-  double MSQR_analytic = PPT.MSQRraw_analytic(costh);
-  PR(srt);
-  PR(costh);
-  PR(MSQR_analytic);
-  PR(MSQR_numeric);
-  double sigtot_numeric = PPT.sigtot_numeric();
-  double sigtot_analytic = PPT.sigtot_analytic();
-  PR(sigtot_numeric);
-  PR(mub(sigtot_numeric));
-  //PR(sigtot_analytic)
-
+  
+  cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "sigtot [mub]" << setw(30) << "Breit-Wigner" << endl;
   for (double srt(1.2); srt<2.1; srt+=0.1) {
     pionPhotoprodTest PPT(srt);
-    cout << setw(10) << srt << setw(15) << mub(PPT.sigtot_numeric()) << endl;
+    cout << setw(10) << srt << setw(15) << mub(PPT.sigtot_numeric()) 
+        << setw(30) << BreitWigner("N1440",srt) << setw(15) << POW<2>(abs(BreitWigner("N1440",srt))) << endl;
   }
   
   return 1;
