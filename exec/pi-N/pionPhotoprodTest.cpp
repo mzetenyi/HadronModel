@@ -16,6 +16,21 @@ using namespace Vectors;
 #include <iomanip>
 using namespace std;
 
+#include "Vrancx.hpp"
+
+double formfactorRNpi(string resonance, double m) {
+  if (Config::exists("noRNpiFF")) return 1;
+  double mN = Config::get<double>("Nucleon.mass");
+  double mpi = Config::get<double>("pi_pm.mass");
+  double mR = Config::get<double>(resonance+".mass");
+  double Gamma = Config::get<double>(resonance+".width");
+  int l = Config::get<double>(resonance+".l");
+  double delta2 = pow(mR-mN-mpi,2) + Gamma*Gamma/4.;
+  double q0 = momentum(mR,mN,mpi);
+  double q = momentum(m,mN,mpi);
+  return sqrt(mR/m) * pow((q0*q0+delta2)/(q*q+delta2),(l+1.)/2.);
+}
+
 DiracMatrix vertexRNpi(FourVector pR, FourVector pN, FourVector q) {
   double isofac = sqrt(2);
   double mpi = Config::get<double>("pi_pm.mass");
@@ -27,6 +42,38 @@ DiracMatrix vertexRNgamma(FourVector pR, FourVector pN, FourVector k, uint mu) {
   double mrho = Config::get<double>("rho.mass");
   double g = Config::get<double>("N1440.gngamma");
   return i_*g/(2.*mrho) * (gamma_(k) * gamma_(mu) - gamma_(mu) * gamma_(k));
+}
+
+DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1, uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g = Config::get<double>(resonance + ".g0");
+  double FF = formfactorRNpi(resonance,sqrt(pR*pR));
+  double isofac = sqrt(2);
+  if (spin==half) {
+    return isofac * FF * vertex1hNpi(g,spin*parity,q);
+  } else if (spin == 3*half) {
+    return isofac * FF * vertex3hNpi(g,spin*parity,muR1,pR,q);
+  } else {
+    cerr << "vertexRNpi: spin-parity " << spin << ((parity>0) ? "+" : "-") << " not implemented" << endl;
+    exit(0);
+  }
+}
+
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, FourVector pN, FourVector k, uint mu, uint muR1, uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g = Config::get<double>(resonance + ".gngamma");
+  if (spin == half) {
+    return vertex1hNgamma(g,spin*parity,pR,mu,k);
+  } else if (spin == 3*half) {
+    return vertex3hNgamma(g,0,0,spin*parity,muR1,pR,mu,k);
+  } else {
+    cerr << "vertexRNgamma: spin-parity " << spin << ((parity>0) ? "+" : "-") << " not implemented" << endl;
+    exit(0);
+  }
 }
 
 DiracMatrix pro1half(FourVector p, double m) {
@@ -42,6 +89,22 @@ double N1440width(double srt){
   return 0;
 }
 
+double resonanceWidth(string resonance, double m) {
+  if (Config::exists("noRwidth")) return 0;
+  double Gamma0 = Config::get<double>(resonance + ".width");
+  if (Config::exists("constRwidth")) {
+    return Gamma0;
+  }
+  double mN = Config::get<double>("Nucleon.mass");
+  double mpi = Config::get<double>("pi_pm.mass");
+  double mR = Config::get<double>(resonance+".mass");
+  int l = Config::get<double>(resonance+".l");
+  double q0 = momentum(mR,mN,mpi);
+  double q = momentum(m,mN,mpi);
+  double FF = formfactorRNpi(resonance,m);
+  return Gamma0 * pow(q/q0,2.*l+1.) * FF*FF;
+}
+
 dcomplex BreitWigner(FourVector p, double m, double Gamma) {
   if (Config::exists("noBW")) return 1;
   return 1./(p*p - m*m + i_*sqrt(p*p)*Gamma);
@@ -53,6 +116,21 @@ DiracMatrix propR(FourVector p) {
   double Gamma = N1440width(srt);
   return i_*pro1half(p,mR) * BreitWigner(p,mR,Gamma);
 }
+
+DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1, uint muR2, uint nuR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  double mR = Config::get<double>(resonance + ".mass");
+  double Gamma = resonanceWidth(resonance,sqrt(p*p));
+  if (spin == half) {
+    return i_*pro1half(p,mR) * BreitWigner(p,mR,Gamma);
+  } else if (spin == 3*half) {
+    return i_*P3h(p,mR,muR1,nuR1) * BreitWigner(p,mR,Gamma);
+  } else {
+    cerr << "propR: spin " << spin << " not implemented" << endl;
+    exit(0);
+  }
+}
+
 
 DiracMatrix proN(FourVector p) {
   double mN(Config::get<double>("Nucleon.mass"));
@@ -98,7 +176,12 @@ double pionPhotoprodTest::MSQRraw_numeric(double costh) {
 
   MultiArray<DiracMatrix> T(idx_lor);
   for (uint mu(0); mu < 4; mu++) {
-    T(mu) = vertexRNpi(p, pf, q) * propR(p) * vertexRNgamma(p, pi, k, mu);
+    if (isSet("N1440")) T(mu) += vertexRNpi("N1440",p, -pf, -q) * propR(p) * vertexRNgamma(p, pi, k, mu);
+    for (uint mu(0); mu < 4; mu++) {
+      if (isSet("N1520")) T(mu) += vertexRNpi("N1520",p, -pf, -q) * propR(p) * vertexRNgamma(p, pi, k, mu);
+
+    }
+
   }
   dcomplex MSQR(0);
   DiracMatrix GG = gamma_null;
