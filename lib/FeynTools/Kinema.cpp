@@ -2,6 +2,10 @@
 
 #include "utils.hpp"
 
+double momentum(double M, double m1, double m2) {
+  return sqrt(lambda(M * M, m1 * m1, m2 * m2)) / (2. * M);
+}
+
 Kinema2::Kinema2(double M, double m1, double m2) : M(M), m1(m1), m2(m2) {}
 
 double Kinema2::pabs() const {

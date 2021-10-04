@@ -4,6 +4,8 @@
 #include "Vectors.hpp"
 using namespace Vectors;
 
+double momentum(double M, double m1, double m2);
+
 class Kinema2 {
  public:
   Kinema2(double M, double m1, double m2);
