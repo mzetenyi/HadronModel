@@ -85,7 +85,7 @@ double resonanceWidth(string resonance, double m) {
 
 dcomplex BreitWigner(string resonance, double srt) {
   if (Config::exists("noBW")) return 1;
-  double mR(Config::get<double>("N1440.mass"));
+  double mR(Config::get<double>(resonance+".mass"));
   double Gamma = resonanceWidth(resonance,srt);
   return 1./(srt*srt - mR*mR + i_*srt*Gamma);
 }
@@ -98,7 +98,7 @@ DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1, uint muR
   if (spin == half) {
     return i_*pro1half(p,mR) * BreitWigner(resonance,srt);
   } else if (spin == 3*half) {
-    return i_*P3h(p,mR,muR1,nuR1) * BreitWigner(resonance,srt);
+    return i_*pro1half(p,mR) * P3h(p,mR,muR1,nuR1) * BreitWigner(resonance,srt);
   } else {
     cerr << "propR: spin " << spin << " not implemented" << endl;
     exit(0);
@@ -144,7 +144,7 @@ double pionPhotoprodTest::MSQRraw_numeric(double costh) {
   MSQR = trace(GG);
   return real(MSQR);
 }
-
+/*
 double pionPhotoprodTest::MSQRraw_analytic(double costh) {
   FourVector pi = KINin.p1(1);
   FourVector k = KINin.p2(1);
@@ -172,21 +172,22 @@ double pionPhotoprodTest::MSQRraw_analytic(double costh) {
 
   return MSQR;
 }
-
+*/
+/*
 double pionPhotoprodTest::diffsig_analytic(double costh) {
   int npol(4);
   double pin_abs = KINin.p1().spacial().abs();
   double pout_abs = KINout.p1().spacial().abs();
   return 1./(32.*pi_*srt*srt) * pout_abs/pin_abs * 1./npol * MSQRraw_analytic(costh);
 }
-
+*/
 double pionPhotoprodTest::diffsig_numeric(double costh) {
   int npol(4);
   double pin_abs = KINin.p1().spacial().abs();
   double pout_abs = KINout.p1().spacial().abs();
   return  1./(32.*pi_*srt*srt) * pout_abs/pin_abs * 1./npol * MSQRraw_numeric(costh);
 }
-
+/*
 double pionPhotoprodTest::sigtot_analytic() {
   double dcosth = 0.01;
   if (Config::exists("dcosth")) dcosth = Config::get<double>("dcosth");
@@ -200,7 +201,7 @@ double pionPhotoprodTest::sigtot_analytic() {
   }
   return sum * dcosth;
 }
-
+*/
 double pionPhotoprodTest::sigtot_numeric() {
   double dcosth = 0.01;
   if (Config::exists("dcosth")) dcosth = Config::get<double>("dcosth");
@@ -219,10 +220,10 @@ int main(int argc, char** argv) {
   Config::load(argc, argv);
   
   cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "sigtot [mub]" << setw(30) << "Breit-Wigner" << endl;
-  for (double srt(1.2); srt<2.1; srt+=0.1) {
+  for (double srt(1.2); srt<3.1; srt+=0.1) {
     pionPhotoprodTest PPT(srt);
     cout << setw(10) << srt << setw(15) << mub(PPT.sigtot_numeric()) 
-        << setw(30) << BreitWigner("N1440",srt) << setw(15) << POW<2>(abs(BreitWigner("N1440",srt))) << endl;
+        << setw(30) << BreitWigner("N1520",srt) << setw(15) << POW<2>(abs(BreitWigner("N1520",srt))) << endl;
   }
   
   return 1;

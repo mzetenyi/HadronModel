@@ -21,11 +21,11 @@ DiracMatrix proN(FourVector p);
 class pionPhotoprodTest {
 public:
     pionPhotoprodTest(double srt);
-    double MSQRraw_analytic(double costh);
+    //double MSQRraw_analytic(double costh);
     double MSQRraw_numeric(double costh);
-    double diffsig_analytic(double costh);
+    //double diffsig_analytic(double costh);
     double diffsig_numeric(double costh);
-    double sigtot_analytic();
+    //double sigtot_analytic();
     double sigtot_numeric();
 private:
     double srt;
