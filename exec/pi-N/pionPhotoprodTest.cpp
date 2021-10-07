@@ -11,54 +11,61 @@ using namespace Spinors;
 #include "Vectors.hpp"
 using namespace Vectors;
 
-#include "MultiArray.hpp"
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+
+#include "MultiArray.hpp"
 using namespace std;
 
 #include "Vrancx.hpp"
+#include "wavefunc.hpp"
 
 double formfactorRNpi(string resonance, double m) {
   if (Config::exists("noRNpiFF")) return 1;
   double mN = Config::get<double>("Nucleon.mass");
   double mpi = Config::get<double>("pi_pm.mass");
-  double mR = Config::get<double>(resonance+".mass");
-  double Gamma = Config::get<double>(resonance+".width");
-  int l = Config::get<double>(resonance+".l");
-  double delta2 = pow(mR-mN-mpi,2) + Gamma*Gamma/4.;
-  double q0 = momentum(mR,mN,mpi);
-  double q = momentum(m,mN,mpi);
-  return sqrt(mR/m) * pow((q0*q0+delta2)/(q*q+delta2),(l+1.)/2.);
+  double mR = Config::get<double>(resonance + ".mass");
+  double Gamma = Config::get<double>(resonance + ".width");
+  int l = Config::get<double>(resonance + ".l");
+  double delta2 = pow(mR - mN - mpi, 2) + Gamma * Gamma / 4.;
+  double q0 = momentum(mR, mN, mpi);
+  double q = momentum(m, mN, mpi);
+  return sqrt(mR / m) *
+         pow((q0 * q0 + delta2) / (q * q + delta2), (l + 1.) / 2.);
 }
 
-DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1, uint muR2) {
+DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
+                       FourVector q, uint muR1, uint muR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
   double g = Config::get<double>(resonance + ".g0");
-  double FF = formfactorRNpi(resonance,sqrt(pR*pR));
+  double FF = formfactorRNpi(resonance, sqrt(pR * pR));
   double isofac = sqrt(2);
-  if (spin==half) {
-    return isofac * FF * vertex1hNpi(g,spin*parity,q);
-  } else if (spin == 3*half) {
-    return isofac * FF * vertex3hNpi(g,spin*parity,muR1,pR,q);
+  if (spin == half) {
+    return isofac * FF * vertex1hNpi(g, spin * parity, q);
+  } else if (spin == 3 * half) {
+    return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
   } else {
-    cerr << "vertexRNpi: spin-parity " << spin << ((parity>0) ? "+" : "-") << " not implemented" << endl;
+    cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
     exit(0);
   }
 }
 
-DiracMatrix vertexRNgamma(string resonance, FourVector pR, FourVector pN, FourVector k, uint mu, uint muR1, uint muR2) {
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, FourVector pN,
+                          FourVector k, uint mu, uint muR1, uint muR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
   double g = Config::get<double>(resonance + ".gngamma");
   if (spin == half) {
-    return vertex1hNgamma(g,spin*parity,pR,mu,k);
-  } else if (spin == 3*half) {
-    return vertex3hNgamma(g,0,0,spin*parity,muR1,pR,mu,k);
+    return vertex1hNgamma(g, spin * parity, pR, mu, k);
+  } else if (spin == 3 * half) {
+    return vertex3hNgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
   } else {
-    cerr << "vertexRNgamma: spin-parity " << spin << ((parity>0) ? "+" : "-") << " not implemented" << endl;
+    cerr << "vertexRNgamma: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
     exit(0);
   }
 }
@@ -75,40 +82,85 @@ double resonanceWidth(string resonance, double m) {
   }
   double mN = Config::get<double>("Nucleon.mass");
   double mpi = Config::get<double>("pi_pm.mass");
-  double mR = Config::get<double>(resonance+".mass");
-  int l = Config::get<double>(resonance+".l");
-  double q0 = momentum(mR,mN,mpi);
-  double q = momentum(m,mN,mpi);
-  double FF = formfactorRNpi(resonance,m);
-  return Gamma0 * pow(q/q0,2.*l+1.) * FF*FF;
+  double mR = Config::get<double>(resonance + ".mass");
+  int l = Config::get<double>(resonance + ".l");
+  double q0 = momentum(mR, mN, mpi);
+  double q = momentum(m, mN, mpi);
+  double FF = formfactorRNpi(resonance, m);
+  return Gamma0 * pow(q / q0, 2. * l + 1.) * FF * FF;
 }
 
 dcomplex BreitWigner(string resonance, double srt) {
   if (Config::exists("noBW")) return 1;
-  double mR(Config::get<double>(resonance+".mass"));
-  double Gamma = resonanceWidth(resonance,srt);
-  return 1./(srt*srt - mR*mR + i_*srt*Gamma);
+  double mR(Config::get<double>(resonance + ".mass"));
+  double Gamma = resonanceWidth(resonance, srt);
+  return 1. / (srt * srt - mR * mR + i_ * srt * Gamma);
 }
 
-DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1, uint muR2, uint nuR2) {
+DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1,
+                  uint muR2, uint nuR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   double mR = Config::get<double>(resonance + ".mass");
-  double Gamma = resonanceWidth(resonance,sqrt(p*p));
-  double srt = sqrt(p*p);
+  double Gamma = resonanceWidth(resonance, sqrt(p * p));
+  double srt = sqrt(p * p);
   if (spin == half) {
-    return i_*pro1half(p,mR) * BreitWigner(resonance,srt);
-  } else if (spin == 3*half) {
-    return i_*pro1half(p,mR) * P3h(p,mR,muR1,nuR1) * BreitWigner(resonance,srt);
+    return i_ * pro1half(p, mR) * BreitWigner(resonance, srt);
+  } else if (spin == 3 * half) {
+    return i_ * pro1half(p, mR) * P3h(p, mR, muR1, nuR1) *
+           BreitWigner(resonance, srt);
   } else {
     cerr << "propR: spin " << spin << " not implemented" << endl;
     exit(0);
   }
 }
 
-
 DiracMatrix proN(FourVector p) {
   double mN(Config::get<double>("Nucleon.mass"));
   return gamma_(p) + mN * gamma_unit;
+}
+
+double widthRNpi(string resonance, double M) {
+  // calculate kinematics:
+  halfint JR = Config::get<halfint>(resonance + ".spin");
+  double mN = Config::get<double>("Nucleon.mass");
+  double mpi(Config::get<double>("pi_pm.mass"));
+
+  Kinema2 kin(M, mN, mpi);
+  FourVector pR = kin.P();
+  FourVector pN = kin.p1();
+  FourVector ppi = kin.p2();
+  ubar_ ubarN(half, pN);
+
+  double MSQR(0);
+  for (halfint laN : {half, -half}) {
+    if (JR == half) {
+      u_1h uR(pR);
+      for (halfint laR : {half, -half}) {
+        dcomplex helamp =
+            ubarN(0, laN) * vertexRNpi(resonance, pR, -pN, -ppi) * uR(laR);
+        MSQR += real(helamp * conj(helamp));
+      }
+    } else if (JR == 3 * half) {
+      u_3h uR(pR);
+      for (halfint laR : {3 * half, half, -half, -3 * half}) {
+        dcomplex helamp(0);
+        for (uint mu(0); mu < 4; mu++) {
+          helamp += ubarN(0, laN) * vertexRNpi(resonance, pR, -pN, -ppi, mu) *
+                    uR(mu, laR) * sign_(mu);
+        }
+        MSQR += real(helamp * conj(helamp));
+      }
+    } else {
+      cerr << "widthRNpi: JR = " << JR << " not implemented" << endl;
+      exit(0);
+    }
+  }
+  return 1. / (8. * pi_) * kin.pabs() / (M * M) * MSQR;
+}
+
+double widthRNpi(string resonance) {
+  double M = Config::get<double>(resonance + ".mass");
+  return widthRNpi(resonance, M);
 }
 
 pionPhotoprodTest::pionPhotoprodTest(double srt)
@@ -117,8 +169,7 @@ pionPhotoprodTest::pionPhotoprodTest(double srt)
       mN(Config::get<double>("Nucleon.mass")),
       mpi(Config::get<double>("pi_pm.mass")),
       KINin(srt, mN, 0),
-      KINout(srt, mN, mpi) {
-}
+      KINout(srt, mN, mpi) {}
 
 double pionPhotoprodTest::MSQRraw_numeric(double costh) {
   FourVector pi = KINin.p1(1);
@@ -128,18 +179,30 @@ double pionPhotoprodTest::MSQRraw_numeric(double costh) {
   FourVector p = pi + k;
   MultiArray<DiracMatrix> T(idx_lor);
   for (uint mu(0); mu < 4; mu++) {
-    if (isSet("N1440")) T(mu) += vertexRNpi("N1440",p, -pf, -q) * propR("N1440",p) * vertexRNgamma("N1440",p, pi, k, mu);
+    T(mu) = gamma_null;
+    for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
+      if (isSet(resonance)) {
+        T(mu) += vertexRNpi(resonance, p, -pf, -q) * propR(resonance, p) *
+                 vertexRNgamma(resonance, p, pi, k, mu);
+      }
+    }
     for (uint nu1(0); nu1 < 4; nu1++) {
       for (uint nu2(0); nu2 < 4; nu2++) {
-        if (isSet("N1520")) T(mu) += vertexRNpi("N1520",p, -pf, -q, nu1) * propR("N1520",p,nu1,nu2) * 
-          vertexRNgamma("N1520",-p, pi, k, mu, nu2);
+        for (string resonance : {"D1232", "N1520", "R3hp", "R3hm"}) {
+          if (isSet(resonance)) {
+            T(mu) += vertexRNpi(resonance, p, -pf, -q, nu1) *
+                     propR(resonance, p, nu1, nu2) *
+                     vertexRNgamma(resonance, -p, pi, k, mu, nu2) * sign_(nu1) *
+                     sign_(nu2);
+          }
+        }
       }
     }
   }
   dcomplex MSQR(0);
   DiracMatrix GG = gamma_null;
   for (uint mu(0); mu < 4; mu++) {
-    GG += - proN(pf) * T(mu) * proN(pi) * adj(T(mu) * sign_(mu));
+    GG += -proN(pf) * T(mu) * proN(pi) * adj(T(mu) * sign_(mu));
   }
   MSQR = trace(GG);
   return real(MSQR);
@@ -178,14 +241,16 @@ double pionPhotoprodTest::diffsig_analytic(double costh) {
   int npol(4);
   double pin_abs = KINin.p1().spacial().abs();
   double pout_abs = KINout.p1().spacial().abs();
-  return 1./(32.*pi_*srt*srt) * pout_abs/pin_abs * 1./npol * MSQRraw_analytic(costh);
+  return 1./(32.*pi_*srt*srt) * pout_abs/pin_abs * 1./npol *
+MSQRraw_analytic(costh);
 }
 */
 double pionPhotoprodTest::diffsig_numeric(double costh) {
   int npol(4);
   double pin_abs = KINin.p1().spacial().abs();
   double pout_abs = KINout.p1().spacial().abs();
-  return  1./(32.*pi_*srt*srt) * pout_abs/pin_abs * 1./npol * MSQRraw_numeric(costh);
+  return 1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol *
+         MSQRraw_numeric(costh);
 }
 /*
 double pionPhotoprodTest::sigtot_analytic() {
@@ -218,13 +283,45 @@ double pionPhotoprodTest::sigtot_numeric() {
 
 int main(int argc, char** argv) {
   Config::load(argc, argv);
-  
-  cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "sigtot [mub]" << setw(30) << "Breit-Wigner" << endl;
-  for (double srt(1.2); srt<3.1; srt+=0.1) {
-    pionPhotoprodTest PPT(srt);
-    cout << setw(10) << srt << setw(15) << mub(PPT.sigtot_numeric()) 
-        << setw(30) << BreitWigner("N1520",srt) << setw(15) << POW<2>(abs(BreitWigner("N1520",srt))) << endl;
+  cout << "fixing coupling constants:" << endl;
+  for (string resonance : {"D1232","N1520","N1440","N1535"}) {
+    double g0 = Config::get<double>(resonance+".g0");
+    double Gamma = Config::get<double>(resonance+".width");
+    double Gamma_calc = widthRNpi(resonance);
+    double fac = sqrt(Gamma/Gamma_calc);
+    cout << resonance << " - g0: " << g0 << " -> " << g0*fac 
+    << "( width: " << Gamma_calc << " -> " << Gamma << ")"
+    << endl;
   }
-  
+  cout << "# decay widths" << endl;
+  cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;
+  for (string resonance : {"R1hp", "R1hm", "R3hp", "R3hm"}) {
+    cout << setw(8) << resonance << setw(15) << widthRNpi(resonance) << setw(15)
+         << sqrt(0.2 / widthRNpi(resonance)) << endl;
+  }
+
+  cout << "D(1232) width:" << widthRNpi("D1232") << endl;
+  cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "sigtot [mub]" << setw(15)
+       << "R1hp" << setw(30) << "R1hm" << setw(30) << "R3hp" << setw(30)
+       << "R3hm"
+       // << setw(30) << "Breit-Wigner"
+       << endl;
+  cout << '#' << setw(50) << "width" << endl;
+  double dsrt(0.1 * GeV);
+  if (Config::exists("dsrt")) dsrt = Config::get<double>("dsrt");
+  for (double srt(1.1); srt < 2.1; srt += dsrt) {
+    pionPhotoprodTest PPT(srt);
+    cout << setw(10) << srt << setw(15) << mub(PPT.sigtot_numeric()) << setw(30)
+         << setw(15) << resonanceWidth("R1hp", srt) << setw(15)
+         << widthRNpi("R1hp", srt) << setw(15) << resonanceWidth("R1hm", srt)
+         << setw(15) << widthRNpi("R1hm", srt) << setw(15)
+         << resonanceWidth("R3hp", srt) << setw(15) << widthRNpi("R3hp", srt)
+         << setw(15) << resonanceWidth("R3hm", srt) << setw(15)
+         << widthRNpi("R3hm", srt)
+         //  << BreitWigner("N1520", srt) << setw(15)
+         //  << POW<2>(abs(BreitWigner("N1520", srt)))
+         << endl;
+  }
+
   return 1;
 }

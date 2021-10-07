@@ -17,6 +17,8 @@ double resonanceWidth(string resonance, double m);
 dcomplex BreitWigner(string resonance, double srt);
 DiracMatrix propR(string resonance, FourVector p, uint muR1=0, uint nuR1=0, uint muR2=0, uint nuR2=0);
 DiracMatrix proN(FourVector p);
+double widthRNpi(string resonance, double M);
+double widthRNpi(string resonance);
 
 class pionPhotoprodTest {
 public:
