@@ -12,6 +12,7 @@ class Kinema2 {
   double pabs() const;
   double E1() const;
   double E2() const;
+  FourVector P() const;
   FourVector p1(double costh = 0, double phi = 0) const;
   FourVector p2(double costh = 0, double phi = 0) const;
 
