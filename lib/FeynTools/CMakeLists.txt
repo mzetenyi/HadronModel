@@ -7,6 +7,8 @@ set(SOURCES
     HelicityAmplitudes.hpp
     Histogram.cpp
     Histogram.hpp
+    Isospin.cpp
+    Isospin.hpp
     Kinema.hpp
     Kinema.cpp
     MultiArray.cpp
