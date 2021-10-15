@@ -88,12 +88,18 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
   }
 }
 
-DiracMatrix vertexRNgamma(string resonance, FourVector pR, FourVector pN,
-                          FourVector k, uint mu, uint muR1, uint muR2) {
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1,
+                          uint muR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
-  double g = Config::get<double>(resonance + ".gngamma");
+  double g(0);
+  if (QR == 0) {
+    g = Config::get<double>(resonance + ".gngamma");
+  } else {
+    g = Config::get<double>(resonance + ".gpgamma");
+  }
   if (spin == half) {
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
   } else if (spin == 3 * half) {
@@ -157,6 +163,7 @@ DiracMatrix proN(FourVector p) {
 double widthRNpi(string resonance, double M) {
   // calculate kinematics:
   halfint JR = Config::get<halfint>(resonance + ".spin");
+  int npol = 2 * JR + 1;
   double mN = Config::get<double>("Nucleon.mass");
   double mpi(Config::get<double>("pi_pm.mass"));
 
@@ -190,7 +197,7 @@ double widthRNpi(string resonance, double M) {
       exit(0);
     }
   }
-  return 1. / (8. * pi_) * kin.pabs() / (M * M) * MSQR;
+  return 1. / (8. * pi_) * kin.pabs() / (M * M) * 1. / npol * MSQR;
 }
 
 double widthRNpi(string resonance) {
@@ -202,6 +209,7 @@ double widthRNpi(string resonance, int QR, int QN, int Qpi, double M) {
   assert(QR == QN + Qpi);
   // calculate kinematics:
   halfint JR = Config::get<halfint>(resonance + ".spin");
+  int npol = 2 * JR + 1;
   double mN = Config::get<double>("Nucleon.mass");
   double mpi(Config::get<double>("pi_pm.mass"));
 
@@ -237,7 +245,7 @@ double widthRNpi(string resonance, int QR, int QN, int Qpi, double M) {
       exit(0);
     }
   }
-  return 1. / (8. * pi_) * kin.pabs() / (M * M) * MSQR;
+  return 1. / (8. * pi_) * kin.pabs() / (M * M) * 1. / npol * MSQR;
 }
 
 double widthRNpi(string resonance, int QR, double M) {
@@ -263,6 +271,59 @@ double widthRNpi(string resonance, int QR) {
   return widthRNpi(resonance, QR, M);
 }
 
+double widthRNgamma(string resonance, int QR, double M) {
+  halfint isospin = Config::get<halfint>(resonance + ".isospin");
+  assert(QR <= isospin + half and -isospin + half <= QR);
+  if (QR > 1 or QR < 0) return 0;
+  // calculate kinematics:
+  halfint JR = Config::get<halfint>(resonance + ".spin");
+  int npol = 2 * JR + 1;
+  double mN = Config::get<double>("Nucleon.mass");
+
+  Kinema2 kin(M, mN, 0);
+  FourVector pR = kin.P();
+  FourVector pN = kin.p1();
+  FourVector k = kin.p2();
+  ubar_ ubarN(half, pN);
+
+  double MSQR(0);
+  for (halfint laN : {half, -half}) {
+    if (JR == half) {
+      u_1h uR(pR);
+      for (halfint laR : {half, -half}) {
+        for (uint mu(0); mu < 4; mu++) {
+          dcomplex helamp_mu = ubarN(0, laN) *
+                            vertexRNgamma(resonance, pR, QR, pN, k, mu) *
+                            uR(laR);
+          MSQR += -real(helamp_mu * conj(helamp_mu)) * sign_(mu);
+        }
+      }
+    } else if (JR == 3 * half) {
+      u_3h uR(pR);
+      for (halfint laR : {3 * half, half, -half, -3 * half}) {
+        dcomplex helamp_mu(0);
+        for (uint mu(0); mu < 4; mu++) {
+          for (uint nu(0); nu < 4; nu++) {
+            helamp_mu += ubarN(0, laN) *
+                         vertexRNgamma(resonance, pR, QR, pN, k, mu, nu) *
+                         uR(nu, laR) * sign_(nu);
+          }
+          MSQR += -real(helamp_mu * conj(helamp_mu)) * sign_(mu);
+        }
+      }
+    } else {
+      cerr << "widthRNpi: JR = " << JR << " not implemented" << endl;
+      exit(0);
+    }
+  }
+  return 1. / (8. * pi_) * kin.pabs() / (M * M) * 1. / npol * MSQR;
+}
+
+double widthRNgamma(string resonance, int QR) {
+  double M = Config::get<double>(resonance + ".mass");
+  return widthRNgamma(resonance, QR, M);
+}
+
 pionPhotoprodTest::pionPhotoprodTest(double srt, int Qpi, int QN)
     : srt(srt),
       Qpi(Qpi),
@@ -286,7 +347,8 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
     for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
       if (isSet(resonance)) {
         T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi) *
-                 propR(resonance, p) * vertexRNgamma(resonance, p, pi, k, mu);
+                 propR(resonance, p) *
+                 vertexRNgamma(resonance, p, QR, pi, k, mu);
       }
     }
     for (uint nu1(0); nu1 < 4; nu1++) {
@@ -295,8 +357,8 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
           if (isSet(resonance)) {
             T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi, nu1) *
                      propR(resonance, p, nu1, nu2) *
-                     vertexRNgamma(resonance, -p, pi, k, mu, nu2) * sign_(nu1) *
-                     sign_(nu2);
+                     vertexRNgamma(resonance, -p, QR, pi, k, mu, nu2) *
+                     sign_(nu1) * sign_(nu2);
           }
         }
       }
@@ -398,11 +460,29 @@ int main(int argc, char** argv) {
   cout << "fixing coupling constants:" << endl;
   for (string resonance : {"D1232", "N1520", "N1440", "N1535"}) {
     double g0 = Config::get<double>(resonance + ".g0");
+    double gngamma = Config::get<double>(resonance + ".gngamma");
+    double gpgamma = Config::get<double>(resonance + ".gpgamma");
     double Gamma = Config::get<double>(resonance + ".width");
-    double Gamma_calc = widthRNpi(resonance, 1);
-    double fac = sqrt(Gamma / Gamma_calc);
-    cout << resonance << " - g0: " << g0 << " -> " << g0 * fac
-         << "( width: " << Gamma_calc << " -> " << Gamma << ")" << endl;
+    double BRNpi = Config::get<double>(resonance + ".BNpi");
+    double BRngamma = Config::get<double>(resonance + ".Bngamma");
+    double BRpgamma = Config::get<double>(resonance + ".Bpgamma");
+    double GNpi = Gamma * BRNpi;
+    double Gngamma = Gamma * BRngamma;
+    double Gpgamma = Gamma * BRpgamma;
+    double GNpi_calc = widthRNpi(resonance, 1);
+    double Gngamma_calc = widthRNgamma(resonance, 0);
+    double Gpgamma_calc = widthRNgamma(resonance, 1);
+    double fac_Npi = sqrt(GNpi / GNpi_calc);
+    double fac_ngamma = sqrt(Gngamma / Gngamma_calc);
+    double fac_pgamma = sqrt(Gpgamma / Gpgamma_calc);
+    cout << resonance << " -> N+pi   - g0: " << g0 << " -> " << g0 * fac_Npi
+         << "( width: " << GNpi_calc << " -> " << GNpi << ")" << endl;
+    cout << resonance << " -> n+gamma - g: " << gngamma << " -> "
+         << gngamma * fac_ngamma << "( width: " << Gngamma_calc << " -> "
+         << Gngamma << ")" << endl;
+    cout << resonance << " -> p+gamma - g: " << gpgamma << " -> "
+         << gpgamma * fac_pgamma << "( width: " << Gpgamma_calc << " -> "
+         << Gpgamma << ")" << endl;
   }
   cout << "# decay widths" << endl;
   cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;

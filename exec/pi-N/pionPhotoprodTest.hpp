@@ -12,7 +12,7 @@ using namespace std;
 double formfactorRNpi(string resonance, double m);
 DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1=0, uint muR2=0);
 DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN, int QN, FourVector q, int Qpi, uint muR1=0, uint muR2=0);
-DiracMatrix vertexRNgamma(string resonance, FourVector pR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
 DiracMatrix pro1half(FourVector p, double m);
 double resonanceWidth(string resonance, double m);
 dcomplex BreitWigner(string resonance, double srt);
@@ -24,6 +24,8 @@ double widthRNpi(string resonance, int QR, int QN, int Qpi, double M);
 double widthRNpi(string resonance, int QR, double M);
 double widthRNpi(string resonance, int QR, int QN, int Qpi);
 double widthRNpi(string resonance, int QR);
+double widthRNgamma(string resonance, int QR, double M);
+double widthRNgamma(string resonance, int QR);
 
 class pionPhotoprodTest {
 public:
