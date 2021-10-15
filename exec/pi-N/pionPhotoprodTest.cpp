@@ -82,6 +82,8 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
   } else if (spin == 3 * half) {
     return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
+  } else if (spin == 5 * half) {
+    return isofac * FF * vertex5hNpi(g, spin * parity, muR1, muR2, pR, q);
   } else {
     cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
          << " not implemented" << endl;
@@ -105,6 +107,8 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
   } else if (spin == 3 * half) {
     return vertex3hNgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
+  } else if (spin == 5 * half) {
+    return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
   } else {
     cerr << "vertexRNgamma: spin-parity " << spin << ((parity > 0) ? "+" : "-")
          << " not implemented" << endl;
@@ -149,6 +153,9 @@ DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1,
     return i_ * pro1half(p, mR) * BreitWigner(resonance, srt);
   } else if (spin == 3 * half) {
     return i_ * pro1half(p, mR) * P3h(p, mR, muR1, nuR1) *
+           BreitWigner(resonance, srt);
+  } else if (spin == 5 * half) {
+    return i_ * pro1half(p, mR) * P5h(p, mR, muR1, nuR1, muR2, nuR2) *
            BreitWigner(resonance, srt);
   } else {
     cerr << "propR: spin " << spin << " not implemented" << endl;
@@ -241,6 +248,20 @@ double widthRNpi(string resonance, int QR, int QN, int Qpi, double M) {
         }
         MSQR += real(helamp * conj(helamp));
       }
+    } else if (JR == 5 * half) {
+      u_5h uR(pR);
+      for (halfint laR(5 * half); laR >= -5 * half; laR--) {
+        dcomplex helamp(0);
+        for (uint mu1(0); mu1 < 4; mu1++) {
+          for (uint mu2(0); mu2 < 4; mu2++) {
+            helamp +=
+                ubarN(0, laN) *
+                vertexRNpi(resonance, pR, QR, -pN, -QN, -ppi, -Qpi, mu1, mu2) *
+                uR(mu1, mu2, laR) * sign_(mu1) * sign_(mu2);
+          }
+        }
+        MSQR += real(helamp * conj(helamp));
+      }
     } else {
       cerr << "widthRNpi: JR = " << JR << " not implemented" << endl;
       exit(0);
@@ -312,6 +333,22 @@ double widthRNgamma(string resonance, int QR, double M) {
           MSQR += -real(helamp_mu * conj(helamp_mu)) * sign_(mu);
         }
       }
+    } else if (JR == 5 * half) {
+      u_5h uR(pR);
+      for (halfint laR(5 * half); laR >= -5 * half; laR--) {
+        for (uint mu(0); mu < 4; mu++) {
+          dcomplex helamp_mu(0);
+          for (uint nu1(0); nu1 < 4; nu1++) {
+            for (uint nu2(0); nu2 < 4; nu2++) {
+              helamp_mu +=
+                  ubarN(0, laN) *
+                  vertexRNgamma(resonance, pR, QR, pN, k, mu, nu1, nu2) *
+                  uR(nu1, nu2, laR) * sign_(nu1) * sign_(nu2);
+            }
+          }
+          MSQR += -real(helamp_mu * conj(helamp_mu)) * sign_(mu);
+        }
+      }
     } else {
       cerr << "widthRNpi: JR = " << JR << " not implemented" << endl;
       exit(0);
@@ -362,6 +399,24 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
                      propR(resonance, p, nu1, nu2) *
                      vertexRNgamma(resonance, -p, QR, pi, k, mu, nu2) *
                      sign_(nu1) * sign_(nu2);
+          }
+        }
+      }
+    }
+    for (uint nu1(0); nu1 < 4; nu1++) {
+      for (uint nu2(0); nu2 < 4; nu2++) {
+        for (uint nu1p(0); nu1p < 4; nu1p++) {
+          for (uint nu2p(0); nu2p < 4; nu2p++) {
+            for (string resonance : {"N1675", "N1780", "R5hp", "R5hm"}) {
+              if (isSet(resonance)) {
+                T(mu) +=
+                    vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi, nu1, nu2) *
+                    sign_(nu1) * sign_(nu2) *
+                    propR(resonance, p, nu1, nu2, nu1p, nu2p) * sign_(nu1p) *
+                    sign_(nu2p) *
+                    vertexRNgamma(resonance, -p, QR, pi, k, mu, nu1p, nu2p);
+              }
+            }
           }
         }
       }
@@ -461,7 +516,8 @@ int main(int argc, char** argv) {
   cout << "N0 : " << widthRNpi("N1520", 0) << endl;
 
   cout << "fixing coupling constants:" << endl;
-  for (string resonance : {"D1232", "N1520", "N1440", "N1535"}) {
+  for (string resonance : {"D1232", "N1520", "N1440", "N1535", "N1650", "N1675",
+                           "N1680", "N1700", "N1710", "D1600", "D1620"}) {
     double g0 = Config::get<double>(resonance + ".g0");
     double gngamma = Config::get<double>(resonance + ".gngamma");
     double gpgamma = Config::get<double>(resonance + ".gpgamma");
@@ -478,20 +534,21 @@ int main(int argc, char** argv) {
     double fac_Npi = sqrt(GNpi / GNpi_calc);
     double fac_ngamma = sqrt(Gngamma / Gngamma_calc);
     double fac_pgamma = sqrt(Gpgamma / Gpgamma_calc);
-    cout << resonance << " -> N+pi   - g0: " << g0 << " -> " << g0 * fac_Npi
-         << "( width: " << GNpi_calc << " -> " << GNpi << ")" << endl;
-    cout << resonance << " -> n+gamma - g: " << gngamma << " -> "
-         << gngamma * fac_ngamma << "( width: " << Gngamma_calc << " -> "
-         << Gngamma << ")" << endl;
-    cout << resonance << " -> p+gamma - g: " << gpgamma << " -> "
-         << gpgamma * fac_pgamma << "( width: " << Gpgamma_calc << " -> "
-         << Gpgamma << ")" << endl;
+    cout << resonance << " -> N+pi   - g0: " << setw(12) << g0 << " -> "
+         << setw(12) << g0 * fac_Npi << " ( width: " << setw(12) << GNpi_calc
+         << " -> " << setw(12) << GNpi << ")" << endl;
+    cout << resonance << " -> n+gamma - g: " << setw(12) << gngamma << " -> "
+         << setw(12) << gngamma * fac_ngamma << " ( width: " << setw(12)
+         << Gngamma_calc << " -> " << setw(12) << Gngamma << ")" << endl;
+    cout << resonance << " -> p+gamma - g: " << setw(12) << gpgamma << " -> "
+         << setw(12) << gpgamma * fac_pgamma << " ( width: " << setw(12)
+         << Gpgamma_calc << " -> " << setw(12) << Gpgamma << ")" << endl;
   }
   cout << "# decay widths" << endl;
   cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;
-  for (string resonance : {"R1hp", "R1hm", "R3hp", "R3hm"}) {
-    cout << setw(8) << resonance << setw(15) << widthRNpi(resonance) << setw(15)
-         << sqrt(0.2 / widthRNpi(resonance)) << endl;
+  for (string resonance : {"R1hp", "R1hm", "R3hp", "R3hm", "R5hp", "R5hm"}) {
+    cout << setw(8) << resonance << setw(15) << widthRNpi(resonance,1) << setw(15)
+         << sqrt(0.2 / widthRNpi(resonance,1)) << endl;
   }
 
   cout << "D(1232) width:" << widthRNpi("D1232") << endl;
@@ -511,12 +568,12 @@ int main(int argc, char** argv) {
     cout << setw(10) << srt << setw(15) << mub(PPpi0p.sigtot_numeric())
          << setw(15) << mub(PPpimp.sigtot_numeric()) << setw(15)
          << mub(PPpipn.sigtot_numeric()) << setw(15)
-         << resonanceWidth("R1hp", srt) << setw(15) << widthRNpi("R1hp", srt)
+         << resonanceWidth("R1hp", srt) << setw(15) << widthRNpi("R1hp", 1, srt)
          << setw(15) << resonanceWidth("R1hm", srt) << setw(15)
-         << widthRNpi("R1hm", srt) << setw(15) << resonanceWidth("R3hp", srt)
-         << setw(15) << widthRNpi("R3hp", srt) << setw(15)
+         << widthRNpi("R1hm", 1, srt) << setw(15) << resonanceWidth("R3hp", srt)
+         << setw(15) << widthRNpi("R3hp", 1, srt) << setw(15)
          << resonanceWidth("R3hm", srt) << setw(15)
-         << widthRNpi("R3hm", srt)
+         << widthRNpi("R3hm", 1, srt)
          //  << BreitWigner("N1520", srt) << setw(15)
          //  << POW<2>(abs(BreitWigner("N1520", srt)))
          << endl;
