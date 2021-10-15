@@ -30,7 +30,7 @@ target_include_directories(pionPhotoprodAnalytic PUBLIC ../../lib/FeynTools ../.
 target_link_libraries(pionPhotoprodAnalytic FeynTools)
 target_link_libraries(pionPhotoprodAnalytic ELModel)
 
-add_executable(pionPhotoprodTest pionPhotoprodTest.cpp)
+add_executable(pionPhotoprodTest pionPhotoprodTest.cpp BornTerms.cpp BornTerms.hpp)
 
 target_include_directories(pionPhotoprodTest PUBLIC ../../lib/FeynTools ../../lib/ELModel)
 

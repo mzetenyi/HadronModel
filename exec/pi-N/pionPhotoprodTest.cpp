@@ -18,6 +18,7 @@ using namespace Vectors;
 #include "MultiArray.hpp"
 using namespace std;
 
+#include "BornTerms.hpp"
 #include "Isospin.hpp"
 #include "Vrancx.hpp"
 #include "wavefunc.hpp"
@@ -293,16 +294,16 @@ double widthRNgamma(string resonance, int QR, double M) {
       for (halfint laR : {half, -half}) {
         for (uint mu(0); mu < 4; mu++) {
           dcomplex helamp_mu = ubarN(0, laN) *
-                            vertexRNgamma(resonance, pR, QR, pN, k, mu) *
-                            uR(laR);
+                               vertexRNgamma(resonance, pR, QR, pN, k, mu) *
+                               uR(laR);
           MSQR += -real(helamp_mu * conj(helamp_mu)) * sign_(mu);
         }
       }
     } else if (JR == 3 * half) {
       u_3h uR(pR);
       for (halfint laR : {3 * half, half, -half, -3 * half}) {
-        dcomplex helamp_mu(0);
         for (uint mu(0); mu < 4; mu++) {
+          dcomplex helamp_mu(0);
           for (uint nu(0); nu < 4; nu++) {
             helamp_mu += ubarN(0, laN) *
                          vertexRNgamma(resonance, pR, QR, pN, k, mu, nu) *
@@ -341,9 +342,11 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
   FourVector pf = KINout.p1(costh);
   FourVector q = KINout.p2(costh);
   FourVector p = pi + k;
+  BornTerms BT(pi, QR, -q, -Qpi, k);
   MultiArray<DiracMatrix> T(idx_lor);
   for (uint mu(0); mu < 4; mu++) {
     T(mu) = gamma_null;
+    if (isSet("Born")) T(mu) += BT.Tgamma_all(mu);
     for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
       if (isSet(resonance)) {
         T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi) *
