@@ -73,8 +73,8 @@ D1232 {
   BDpi = 0
   BNrho = 0
   BNsi = 0
-  gngamma = 1.2784
-  gpgamma = 1.2784
+  gngamma = -1.2784
+  gpgamma = -1.2784
   u_gngamma = 0.0416667
   gVMD2 = 20.9392
   g0 = 0.24683
@@ -177,12 +177,14 @@ N1650 {
   mass = 1.65
   width = 0.125
   Bngamma = 0.00085
+  Bpgamma = 0.0012
   BNpi = 0.6
   BNeta = 0.25
   BDpi = 0.12
   BNrho = 0.07
   BNsi = 0.1
   gngamma = 0.0339929
+  gpgamma = 0.0403896
   u_gngamma = 0
   gVMD2 = 0.556779
   g0 = 0.134359
@@ -203,11 +205,13 @@ N1675 {
   mass = 1.675
   width = 0.145
   Bngamma = 0.00075
+  Bpgamma = 0.0001
   BNpi = 0.4
   BDpi = 0.3
   BNrho = 0.005 // half of upper limit 
   BNsi = 0.05
   gngamma = 0.548374
+  gpgamma = 0.200238
   u_gngamma = 0.5
   gVMD2 = 8.98196
   g0 = 0.000696245
@@ -228,11 +232,13 @@ N1680 {
   mass = 1.685
   width = 0.12
   Bngamma = 0.000335
+  Bpgamma = 0.00265
   BNpi = 0.65
   BDpi = 0.17
   BNrho = 0.12
   BNsi = 0.14
   gngamma = 0.320495
+  gpgamma = 0.901408
   u_gngamma = 0.186567
   gVMD2 = 5.24946
   g0 = 0.00277481
@@ -253,11 +259,13 @@ N1700 {
   mass = 1.72
   width = 0.2
   Bngamma = 0.0007
+  Bpgamma = 0.0003
   BNpi = 0.12
   BDpi = 0.7
   BNrho = 0.45
   BNsi = 0.08
   gngamma = 0.119195
+  gpgamma = 0.0780312
   u_gngamma = 0
   gVMD2 = 1.95232
   g0 = 0.0430866
@@ -278,11 +286,13 @@ N1710 {
   mass = 1.71
   width = 0.14
   Bngamma = 0.0001
+  Bpgamma = 0.00041
   BNpi = 0.125
   BDpi = 0.06
   BNrho = 0.09
   BNsi = 0.
   gngamma = 0.0111394
+  gpgamma = 0.0225555
   u_gngamma = 0
   gVMD2 = 0.182455
   g0 = 0.0593973
@@ -303,11 +313,13 @@ D1600 {
   mass = 1.57
   width = 0.25
   Bngamma = 0.00018
+  Bpgamma = 0.00018
   BNpi = 0.16
   BDpi = 0.55
   BNrho = 0.05
   BNsi = 0
   gngamma = 0.0961241
+  gpgamma = 0.0961241
   u_gngamma = 0
   gVMD2 = 1.57444
   g0 = 0.0392509
@@ -328,11 +340,13 @@ D1620 {
   mass = 1.61
   width = 0.13
   Bngamma = 0.00065
+  Bpgamma = 0.00065
   BNpi = 0.3
   BDpi = 0.45
   BNrho = 0.43
   BNsi = 0
   gngamma = 0.032623
+  gpgamma = 0.032623
   u_gngamma = 0
   gVMD2 = 0.534341
   g0 = 0.180828
@@ -353,6 +367,7 @@ R1hp {
   mass = 1.4
   width = 0.2
   gngamma = 1
+  gpgamma = 1
   g0 = 0.352031
 }
 
@@ -364,6 +379,7 @@ R1hm {
   mass = 1.4
   width = 0.2
   gngamma = 1
+  gpgamma = 1
   g0 = 0.336116
 }
 
@@ -375,6 +391,7 @@ R3hp {
   mass = 1.4
   width = 0.2
   gngamma = 1
+  gpgamma = 1
   g0 = 0.05164
 }
 
@@ -386,5 +403,30 @@ R3hm {
   mass = 1.4
   width = 0.2
   gngamma = 1
+  gpgamma = 1
+  g0 = 0.274343
+}
+
+R5hp {
+  spin = 5/2
+  parity = 1
+  isospin = 1/2
+  l = 3
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.05164
+}
+
+R5hm {
+  spin = 5/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
   g0 = 0.274343
 }
