@@ -73,9 +73,8 @@ D1232 {
   BDpi = 0
   BNrho = 0
   BNsi = 0
-  gngamma = 1.26399
-  //gngamma = 1.04657
-  gpgamma = 1.04657
+  gngamma = 1.2784
+  gpgamma = 1.2784
   u_gngamma = 0.0416667
   gVMD2 = 20.9392
   g0 = 0.24683
@@ -101,8 +100,8 @@ N1440 {
   BDpi = 0.165
   BNrho = 0.001  // half of upper limit 
   BNsi = 0.17
-  gngamma = 0.0520929
-  gpgamma = 0.0612692
+  gngamma = 0.0528755
+  gpgamma = 0.0621897
   u_gngamma = 0.166667
   gVMD2 = 0.866062
   g0 = 0.384704
@@ -128,8 +127,8 @@ N1520 {
   BDpi = 0.28
   BNrho = 0.122
   BNsi = 0.01
-  gngamma = 0.336679
-  gpgamma = 0.336679
+  gngamma = 0.355091
+  gpgamma = 0.355091
   u_gngamma = 0.138554
   gVMD2 = 5.85106
   g0 = 0.147741
@@ -156,8 +155,8 @@ N1535 {
   BDpi = 0.025
   BNrho = 0.032
   BNsi = 0.06
-  gngamma = 0.0453424
-  gpgamma = 0.0596519
+  gngamma = 0.0582606
+  gpgamma = 0.0766469
   u_gngamma = 0.461538
   gVMD2 = 0.954265
   g0 = 0.15653
