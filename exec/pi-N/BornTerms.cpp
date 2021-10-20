@@ -19,7 +19,9 @@ BornTerms::BornTerms(FourVector p1, int Q1, FourVector q, int Qpi, FourVector k)
   Trho_all(idx_lor) {
   FourVector p2 = - p1 - q - k;
   int Q2 = - Q1 - Qpi;
+  //PR(Q1); PR(Q2); PR(Qpi);
   double ISO = -1. + (Q1*Q1 + Q2*Q2) + sqrt(2.)*Qpi*Qpi;
+  //PR(ISO);
   static const double f_NNpi = Config::get<double>("f_NNpi");
   static const double mpi = Config::get<double>("pi_pm.mass");
   static const double mn = Config::get<double>("Nucleon.mass");
@@ -30,11 +32,11 @@ BornTerms::BornTerms(FourVector p1, int Q1, FourVector q, int Qpi, FourVector k)
   // static const double kan = 0;
   // static const double kap = 0;
   // static const double kar = 0;
-  static const double ka1 = (Q1==0) ? kan : kap;
-  static const double ka2 = (Q2==0) ? kan : kap;
-  static const double alpha(1/137.036);
-  static const double e(sqrt(4.*pi_*alpha));
-  static const double fac = e*f_NNpi/mpi * ISO;
+  const double ka1 = (Q1==0) ? kan : kap;
+  const double ka2 = (Q2==0) ? kan : kap;
+  const double alpha(1/137.036);
+  const double e(sqrt(4.*pi_*alpha));
+  const double fac = e*f_NNpi/mpi * ISO;
   if (Config::exists("cutoffBorn")) {
     //    cerr << "CUTOFF" << endl;
     double LBorn = 0.63; // from Zetenyi, Wolf PRC 2012
