@@ -362,6 +362,65 @@ double widthRNgamma(string resonance, int QR) {
   return widthRNgamma(resonance, QR, M);
 }
 
+// old calculation of Born terms (from 2012 paper) - isospin not implemented:
+DiracMatrix BornTerms_old(FourVector pi, FourVector pf, FourVector q, uint mu) {
+  double F1(1.);
+  double F2(1.);
+  double F3(1.);
+  double Fhat(1.);
+  MultiArray<DiracMatrix> M_(idx(_1, _5), idx_lor);
+  DiracMatrix Tgamma;
+  FourVector k = pi + q - pf;
+  double s = (pi + q) * (pi + q);
+  double u = (pi - k) * (pi - k);
+  double t = (pi - pf) * (pi - pf);
+  static const double f_NNpi = Config::get<double>("f_NNpi");
+  static const double mpi = Config::get<double>("pi_pm.mass");
+  static const double mn = Config::get<double>("Nucleon.mass");
+  static const double mrho = Config::get<double>("rho.mass");
+  static const double kan = Config::get<double>("ka_nngamma");
+  static const double kap = Config::get<double>("ka_ppgamma");
+  static const double kar = Config::get<double>("ka_NNrho");
+  static const double alpha(1 / 137.036);
+  static const double e(sqrt(4. * pi_ * alpha));
+  static const double fac = e * f_NNpi / mpi * sqrt(2);
+  if (Config::exists("cutoffBorn")) {
+    double LBorn = 0.63;  // from Zetenyi, Wolf PRC 2012
+    if (Config::exists("LBorn")) {
+      LBorn = Config::get<double>("LBorn");
+    }
+
+    F1 = 1. / (1. + POW<2>(s - mn * mn) / POW<4>(LBorn));
+    F2 = 1. / (1. + POW<2>(u - mn * mn) / POW<4>(LBorn));
+    F3 = 1. / (1. + POW<2>(t - mpi * mpi) / POW<4>(LBorn));
+    Fhat = F1 + F2 + F3 - F1 * F2 - F1 * F3 - F2 * F3 + F1 * F2 * F3;
+  }
+  for (halfint mu(0); mu < 4; mu++) {
+    M_(_1, mu) = gamma5_ * (gamma_(mu) * gamma_(k) - k(mu) * gamma_unit);
+    M_(_2, mu) = gamma5_ / 2. *
+                 ((2. * pi(mu) - k(mu)) * (2. * (q * k) - k * k) -
+                  (2. * q(mu) - k(mu)) * (2. * (pi * k) - k * k));
+    M_(_3, mu) = gamma5_ / 2. *
+                 (gamma_(mu) * (2. * (pf * k) + k * k) -
+                  (2. * pf(mu) + k(mu)) * gamma_(k));
+    M_(_4, mu) = gamma5_ / 2. *
+                 (gamma_(mu) * (2. * (pi * k) - k * k) -
+                  (2. * pi(mu) - k(mu)) * gamma_(k));
+  }
+  dcomplex Agamma[5];
+  Agamma[1] = -fac * (1. / (2. * mn) * (F1 * kan + F2 * kap) +
+                      2. * mn * F2 / (u - mn * mn) * (1. + kap) +
+                      2. * mn * F1 / (s - mn * mn) * kan);
+  Agamma[2] = fac * 4. * mn * Fhat / (t - mpi * mpi) / (u - mn * mn);
+  Agamma[3] = fac * 2. * kan * F1 / (s - mn * mn);
+  Agamma[4] = fac * 2. * kap * F2 / (u - mn * mn);
+  Tgamma = gamma_null;
+  for (int j(1); j <= 5; j++) {
+    Tgamma += Agamma[j] * M_(_1 * j, mu);
+  }
+  return Tgamma;
+}
+
 pionPhotoprodTest::pionPhotoprodTest(double srt, int Qpi, int QN)
     : srt(srt),
       Qpi(Qpi),
@@ -380,10 +439,20 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
   FourVector q = KINout.p2(costh);
   FourVector p = pi + k;
   BornTerms BT(pi, QR, -q, -Qpi, k);
+  /*
+  if (costh>0.99) {
+    for (int i(1); i<=5; i++) {
+      cerr << "A" << i << " = " << BT.Agamma[i] << endl;
+    }
+  }
+  */
   MultiArray<DiracMatrix> T(idx_lor);
   for (uint mu(0); mu < 4; mu++) {
     T(mu) = gamma_null;
     if (isSet("Born")) T(mu) += BT.Tgamma_all(mu);
+    if (isSet("oldBorn")) {
+      T(mu) += BornTerms_old(pi, pf, -q, mu);
+    }
     for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
       if (isSet(resonance)) {
         T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi) *
@@ -425,7 +494,7 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
   dcomplex MSQR(0);
   DiracMatrix GG = gamma_null;
   for (uint mu(0); mu < 4; mu++) {
-    GG += -proN(pf) * T(mu) * proN(pi) * adj(T(mu) * sign_(mu));
+    GG += -proN(pf) * T(mu) * proN(pi) * adj(T(mu)) * sign_(mu);
   }
   MSQR = trace(GG);
   return real(MSQR);
@@ -506,6 +575,7 @@ double pionPhotoprodTest::sigtot_numeric() {
 
 int main(int argc, char** argv) {
   Config::load(argc, argv);
+  /*
   cout << "decay width of D(1232):" << endl;
   cout << "D++ : " << widthRNpi("D1232", 2) << endl;
   cout << "D+  : " << widthRNpi("D1232", 1) << endl;
@@ -514,7 +584,8 @@ int main(int argc, char** argv) {
   cout << "decay width of N(1520):" << endl;
   cout << "N+ : " << widthRNpi("N1520", 1) << endl;
   cout << "N0 : " << widthRNpi("N1520", 0) << endl;
-
+  */
+  /*
   cout << "fixing coupling constants:" << endl;
   for (string resonance : {"D1232", "N1520", "N1440", "N1535", "N1650", "N1675",
                            "N1680", "N1700", "N1710", "D1600", "D1620"}) {
@@ -544,30 +615,39 @@ int main(int argc, char** argv) {
          << setw(12) << gpgamma * fac_pgamma << " ( width: " << setw(12)
          << Gpgamma_calc << " -> " << setw(12) << Gpgamma << ")" << endl;
   }
-  cout << "# decay widths" << endl;
-  cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;
-  for (string resonance : {"R1hp", "R1hm", "R3hp", "R3hm", "R5hp", "R5hm"}) {
-    cout << setw(8) << resonance << setw(15) << widthRNpi(resonance,1) << setw(15)
-         << sqrt(0.2 / widthRNpi(resonance,1)) << endl;
-  }
+  */
+  /*
+   cout << "# decay widths" << endl;
+   cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;
+   for (string resonance : {"R1hp", "R1hm", "R3hp", "R3hm", "R5hp", "R5hm"}) {
+     cout << setw(8) << resonance << setw(15) << widthRNpi(resonance, 1)
+          << setw(15) << sqrt(0.2 / widthRNpi(resonance, 1)) << endl;
+   }
 
-  cout << "D(1232) width:" << widthRNpi("D1232") << endl;
-  cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "sigtot pi0p" << setw(15)
-       << "sigtot pi-p" << setw(15) << "sigtot pi+n" << setw(15) << "R1hp"
-       << setw(30) << "R1hm" << setw(30) << "R3hp" << setw(30)
+   cout << "D(1232) width:" << widthRNpi("D1232") << endl;
+   */
+  cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "elab" << setw(15)
+       << "sigtot pi0p" << setw(15) << "sigtot pi-p" << setw(15)
+       << "sigtot pi+n" << setw(15) << "R1hp" << setw(30) << "R1hm" << setw(30)
+       << "R3hp" << setw(30)
        << "R3hm"
        // << setw(30) << "Breit-Wigner"
        << endl;
-  cout << '#' << setw(50) << "width" << endl;
+  cout << '#' << setw(150) << "width" << endl;
   double dsrt(0.1 * GeV);
   if (Config::exists("dsrt")) dsrt = Config::get<double>("dsrt");
   for (double srt(1.1); srt < 2.1; srt += dsrt) {
+    double mN = Config::get<double>("Nucleon.mass");
+    double elab = (srt * srt - mN * mN) / (2. * mN);
     pionPhotoprodTest PPpi0p(srt, 0, 1);
     pionPhotoprodTest PPpimp(srt, -1, 1);
     pionPhotoprodTest PPpipn(srt, 1, 0);
-    cout << setw(10) << srt << setw(15) << mub(PPpi0p.sigtot_numeric())
-         << setw(15) << mub(PPpimp.sigtot_numeric()) << setw(15)
-         << mub(PPpipn.sigtot_numeric()) << setw(15)
+    auto ppi0p = mub(PPpi0p.sigtot_numeric());
+    auto ppimp = mub(PPpimp.sigtot_numeric());
+    auto ppipn = mub(PPpipn.sigtot_numeric());
+
+    cout << setw(10) << srt << setw(15) << elab << setw(15) << ppi0p << setw(15)
+         << ppimp << setw(15) << ppipn << setw(15)
          << resonanceWidth("R1hp", srt) << setw(15) << widthRNpi("R1hp", 1, srt)
          << setw(15) << resonanceWidth("R1hm", srt) << setw(15)
          << widthRNpi("R1hm", 1, srt) << setw(15) << resonanceWidth("R3hp", srt)
