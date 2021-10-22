@@ -23,8 +23,9 @@ using namespace std;
 #include "Vrancx.hpp"
 #include "wavefunc.hpp"
 
-double formfactorRNpi(string resonance, double m) {
+double formfactorRNpi(string resonance, double m2) {
   if (Config::exists("noRNpiFF")) return 1;
+  double m = (m2 > 0) ? sqrt(m2) : 0;
   double mN = Config::get<double>("Nucleon.mass");
   double mpi = Config::get<double>("pi_pm.mass");
   double mR = Config::get<double>(resonance + ".mass");
@@ -32,9 +33,21 @@ double formfactorRNpi(string resonance, double m) {
   int l = Config::get<double>(resonance + ".l");
   double delta2 = pow(mR - mN - mpi, 2) + Gamma * Gamma / 4.;
   double q0 = momentum(mR, mN, mpi);
-  double q = momentum(m, mN, mpi);
-  return sqrt(mR / m) *
-         pow((q0 * q0 + delta2) / (q * q + delta2), (l + 1.) / 2.);
+  double q = (m > mN + mpi) ? momentum(m, mN, mpi) : 0;
+  // return sqrt(mR / m) *
+  //       pow((q0 * q0 + delta2) / (q * q + delta2), (l + 1.) / 2.);
+  // double ret= sqrt(mR / m) *
+  //       pow((q0 * q0 + delta2) / (q * q + delta2), (l + 1.) / 2.);
+  double ret = pow((q0 * q0 + delta2) / (q * q + delta2),
+                   (l + 1.) / 2.);  // correspond to Deniz
+  if (isinf(ret)) {
+    cerr << "inf in formfactorRNpi" << endl;
+    PR(sqrt(mR / m));
+    PR(pow((q0 * q0 + delta2) / (q * q + delta2), (l + 1.) / 2.));
+    exit(0);
+  }
+  // PR(ret);
+  return ret;
 }
 
 DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
@@ -43,7 +56,7 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
   double g = Config::get<double>(resonance + ".g0");
-  double FF = formfactorRNpi(resonance, sqrt(pR * pR));
+  double FF = formfactorRNpi(resonance, pR * pR);
   double isofac = sqrt(2);
   if (spin == half) {
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
@@ -63,19 +76,19 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
   double g = Config::get<double>(resonance + ".g0");
-  double FF = formfactorRNpi(resonance, sqrt(pR * pR));
+  double FF = formfactorRNpi(resonance, pR * pR);
 
   double isofac(0);
   if (isospin == half) {
     isofac = isospin_1h1h1(QR, -QN, -Qpi);
   } else if (isospin == 3 * half) {
-    if (pR.future()) {
+    if (pR.future()) {  // incoming resonance
       isofac = isospin_3h1h1(QR, -QN, -Qpi);
-    } else {
-      isofac = isospin_1h3h1(QR, -QN, -Qpi);
+    } else {  // outgoing resonance
+      isofac = isospin_3h1h1(-QR, QN, Qpi);
     }
   } else {
-    cerr << "vertexRNpi: isospin=" << isospin << " not implemented" << endl;
+    cerr << "vertexRNpi: isospin= " << isospin << " not implemented" << endl;
   }
 
   if (spin == half) {
@@ -128,35 +141,39 @@ double resonanceWidth(string resonance, double m) {
   }
   double mN = Config::get<double>("Nucleon.mass");
   double mpi = Config::get<double>("pi_pm.mass");
+  if (m < mN + mpi) return 0;
   double mR = Config::get<double>(resonance + ".mass");
   int l = Config::get<double>(resonance + ".l");
   double q0 = momentum(mR, mN, mpi);
   double q = momentum(m, mN, mpi);
-  double FF = formfactorRNpi(resonance, m);
+  double FF = formfactorRNpi(resonance, m * m);
   return Gamma0 * pow(q / q0, 2. * l + 1.) * FF * FF;
 }
 
-dcomplex BreitWigner(string resonance, double srt) {
+dcomplex BreitWigner(string resonance, double s) {
   if (Config::exists("noBW")) return 1;
+  double srt = (s > 0) ? sqrt(s) : 0;
   double mR(Config::get<double>(resonance + ".mass"));
   double Gamma = resonanceWidth(resonance, srt);
-  return 1. / (srt * srt - mR * mR + i_ * srt * Gamma);
+  return 1. / (s - mR * mR + i_ * srt * Gamma);
 }
 
 DiracMatrix propR(string resonance, FourVector p, uint muR1, uint nuR1,
                   uint muR2, uint nuR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
   double mR = Config::get<double>(resonance + ".mass");
-  double Gamma = resonanceWidth(resonance, sqrt(p * p));
-  double srt = sqrt(p * p);
+  double s = p * p;
+  double srt = (s > 0) ? sqrt(s) : 0;
+  double Gamma = resonanceWidth(resonance, srt);
+  // PR(BreitWigner(resonance,s));
   if (spin == half) {
-    return i_ * pro1half(p, mR) * BreitWigner(resonance, srt);
+    return i_ * pro1half(p, mR) * BreitWigner(resonance, s);
   } else if (spin == 3 * half) {
     return i_ * pro1half(p, mR) * P3h(p, mR, muR1, nuR1) *
-           BreitWigner(resonance, srt);
+           BreitWigner(resonance, s);
   } else if (spin == 5 * half) {
     return i_ * pro1half(p, mR) * P5h(p, mR, muR1, nuR1, muR2, nuR2) *
-           BreitWigner(resonance, srt);
+           BreitWigner(resonance, s);
   } else {
     cerr << "propR: spin " << spin << " not implemented" << endl;
     exit(0);
@@ -421,24 +438,32 @@ DiracMatrix BornTerms_old(FourVector pi, FourVector pf, FourVector q, uint mu) {
   return Tgamma;
 }
 
-pionPhotoprodTest::pionPhotoprodTest(double srt, int Qpi, int QN)
+pionPhotoprodTest::pionPhotoprodTest(double srt, int Qpi, int Qf)
     : srt(srt),
       Qpi(Qpi),
-      QN(QN),
+      Qf(Qf),
+      Qi(Qf + Qpi),
       mR(Config::get<double>("N1440.mass")),
       mN(Config::get<double>("Nucleon.mass")),
       mpi(Config::get<double>("pi_pm.mass")),
-      KINin(srt, mN, 0),
-      KINout(srt, mN, mpi) {}
+      KINin(srt, 0, mN),
+      KINout(srt, mpi, mN) {}
 
 double pionPhotoprodTest::MSQR_numeric(double costh) {
-  int QR = QN + Qpi;
-  FourVector pi = KINin.p1(1);
-  FourVector k = KINin.p2(1);
-  FourVector pf = KINout.p1(costh);
-  FourVector q = KINout.p2(costh);
-  FourVector p = pi + k;
-  BornTerms BT(pi, QR, -q, -Qpi, k);
+  bool s_channel(false);
+  bool u_channel(false);
+  if (isSet("sch")) s_channel = true;
+  if (isSet("uch")) u_channel = true;
+  if (not(s_channel or u_channel)) s_channel = u_channel = true;
+  int Qs = Qi;
+  int Qu = Qf;
+  FourVector pi = KINin.p2(1);
+  FourVector k = KINin.p1(1);
+  FourVector pf = KINout.p2(costh);
+  FourVector q = KINout.p1(costh);
+  FourVector ps = pi + k;
+  FourVector pu = pf - k;
+  BornTerms BT(pi, Qs, -q, -Qpi, k);
   /*
   if (costh>0.99) {
     for (int i(1); i<=5; i++) {
@@ -453,21 +478,44 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
     if (isSet("oldBorn")) {
       T(mu) += BornTerms_old(pi, pf, -q, mu);
     }
-    for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
+    for (string resonance : {"N1440", "N1535", "1650", "R1hp", "R1hm"}) {
       if (isSet(resonance)) {
-        T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi) *
-                 propR(resonance, p) *
-                 vertexRNgamma(resonance, p, QR, pi, k, mu);
+        if (s_channel) {
+          T(mu) += vertexRNpi(resonance, ps, Qs, -pf, -Qf, -q, -Qpi) *
+                   propR(resonance, ps) *
+                   vertexRNgamma(resonance, -ps, -Qs, pi, k, mu);
+        }
+        if (u_channel) {
+          T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, mu) *
+                   propR(resonance, pu) *
+                   vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi);
+          /*
+          cerr << "mu = " << mu << "   --------------------------" << endl;
+          PR(pu); PR(pu*pu);
+          PR(vertexRNgamma(resonance, pu, Qu, -pf, k, mu));
+          PR(propR(resonance, pu));
+          PR(vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi));
+          PR(T(mu));
+          //*/
+        }
       }
     }
     for (uint nu1(0); nu1 < 4; nu1++) {
       for (uint nu2(0); nu2 < 4; nu2++) {
         for (string resonance : {"D1232", "N1520", "R3hp", "R3hm"}) {
           if (isSet(resonance)) {
-            T(mu) += vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi, nu1) *
-                     propR(resonance, p, nu1, nu2) *
-                     vertexRNgamma(resonance, -p, QR, pi, k, mu, nu2) *
-                     sign_(nu1) * sign_(nu2);
+            if (s_channel) {
+              T(mu) += vertexRNpi(resonance, ps, Qs, -pf, -Qf, -q, -Qpi, nu1) *
+                       sign_(nu1) * propR(resonance, ps, nu1, nu2) *
+                       sign_(nu2) *
+                       vertexRNgamma(resonance, -ps, -Qs, pi, k, mu, nu2);
+            }
+            if (u_channel) {
+              T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, nu1) *
+                       sign_(nu1) * propR(resonance, pu, nu1, nu2) *
+                       sign_(nu2) *
+                       vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi, nu2);
+            }
           }
         }
       }
@@ -478,12 +526,23 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
           for (uint nu2p(0); nu2p < 4; nu2p++) {
             for (string resonance : {"N1675", "N1780", "R5hp", "R5hm"}) {
               if (isSet(resonance)) {
-                T(mu) +=
-                    vertexRNpi(resonance, p, QR, -pf, -QN, -q, -Qpi, nu1, nu2) *
-                    sign_(nu1) * sign_(nu2) *
-                    propR(resonance, p, nu1, nu2, nu1p, nu2p) * sign_(nu1p) *
-                    sign_(nu2p) *
-                    vertexRNgamma(resonance, -p, QR, pi, k, mu, nu1p, nu2p);
+                if (s_channel) {
+                  T(mu) +=
+                      vertexRNpi(resonance, ps, Qs, -pf, -Qf, -q, -Qpi, nu1,
+                                 nu2) *
+                      sign_(nu1) * sign_(nu2) *
+                      propR(resonance, ps, nu1, nu2, nu1p, nu2p) * sign_(nu1p) *
+                      sign_(nu2p) *
+                      vertexRNgamma(resonance, -ps, -Qs, pi, k, mu, nu1p, nu2p);
+                }
+                if (u_channel) {
+                  T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, nu1, nu2) *
+                           sign_(nu1) * sign_(nu2) *
+                           propR(resonance, pu, nu1, nu2, nu1p, nu2p) *
+                           sign_(nu1p) * sign_(nu2p) *
+                           vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi,
+                                      nu1p, nu2p);
+                }
               }
             }
           }
@@ -539,8 +598,12 @@ MSQRraw_analytic(costh);
 */
 double pionPhotoprodTest::diffsig_numeric(double costh) {
   int npol(4);
-  double pin_abs = KINin.p1().spacial().abs();
-  double pout_abs = KINout.p1().spacial().abs();
+  // double pin_abs = KINin.p1().spacial().abs();
+  // double pout_abs = KINout.p1().spacial().abs();
+  double pin_abs = KINin.pabs();
+  double pout_abs = KINout.pabs();
+  cerr << "phase space: " << setw(15) << mub(1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol) << endl;
+  cerr << "MSQR:        " << setw(15) << MSQR_numeric(costh) << endl;
   return 1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol *
          MSQR_numeric(costh);
 }
@@ -626,6 +689,15 @@ int main(int argc, char** argv) {
 
    cout << "D(1232) width:" << widthRNpi("D1232") << endl;
    */
+  double srt = 1.5;
+  double costh = 0.904827;
+  pionPhotoprodTest PP1n(srt, 1, 0);
+  double msqr = PP1n.MSQR_numeric(costh);
+  PR(msqr);
+  for (double costh(-1.); costh < 1.; costh += 0.1) {
+    cout << setw(9) << costh << setw(15) << mub(PP1n.diffsig_numeric(costh)) << endl;
+  }
+
   cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "elab" << setw(15)
        << "sigtot pi0p" << setw(15) << "sigtot pi-p" << setw(15)
        << "sigtot pi+n" << setw(15) << "R1hp" << setw(30) << "R1hm" << setw(30)
@@ -639,6 +711,7 @@ int main(int argc, char** argv) {
   for (double srt(1.1); srt < 2.1; srt += dsrt) {
     double mN = Config::get<double>("Nucleon.mass");
     double elab = (srt * srt - mN * mN) / (2. * mN);
+    /*
     pionPhotoprodTest PPpi0p(srt, 0, 1);
     pionPhotoprodTest PPpimp(srt, -1, 1);
     pionPhotoprodTest PPpipn(srt, 1, 0);
@@ -654,10 +727,10 @@ int main(int argc, char** argv) {
          << setw(15) << widthRNpi("R3hp", 1, srt) << setw(15)
          << resonanceWidth("R3hm", srt) << setw(15)
          << widthRNpi("R3hm", 1, srt)
-         //  << BreitWigner("N1520", srt) << setw(15)
-         //  << POW<2>(abs(BreitWigner("N1520", srt)))
+         //  << BreitWigner("N1520", srt*srt) << setw(15)
+         //  << POW<2>(abs(BreitWigner("N1520", srt*srt)))
          << endl;
+    //*/
   }
-
   return 1;
 }

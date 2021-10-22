@@ -29,7 +29,7 @@ double widthRNgamma(string resonance, int QR);
 
 class pionPhotoprodTest {
 public:
-    pionPhotoprodTest(double srt, int Qpi, int QN);
+    pionPhotoprodTest(double srt, int Qpi, int Qf);
     //double MSQRraw_analytic(double costh);
     double MSQR_numeric(double costh);
     //double diffsig_analytic(double costh);
@@ -39,7 +39,8 @@ public:
 private:
     double srt;
     int Qpi;
-    int QN;
+    int Qf;
+    int Qi;
     double mR;
     double mN;
     double mpi;
