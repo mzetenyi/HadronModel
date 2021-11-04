@@ -62,15 +62,19 @@ const halfint& halfint::operator*=(int n) {
   _2x *= n;
   return *this;
 }
+/*
 const double halfint::operator*(double a) {
   return _2x/2. * a;
 }
+*/
 const double halfint::operator/(double a) {
   return _2x/2. / a;
 }
+/*
 const dcomplex halfint::operator*(dcomplex a) {
   return _2x/2. * a;
 }
+*/
 const dcomplex halfint::operator/(dcomplex a) {
   return _2x/2. / a;
 }
@@ -128,10 +132,22 @@ const halfint operator*(int n, const halfint& h) {
 const halfint operator*(const halfint& h, int n) {
   return halfint(n*h._2x,1);
 }
+const halfint operator*(uint n, const halfint& h) {
+  return halfint(n*h._2x,1);
+}
+const halfint operator*(const halfint& h, uint n) {
+  return halfint(n*h._2x,1);
+}
 const double operator*(double a, const halfint& h){
   return h._2x/2. * a;
 }
+const double operator*(const halfint& h, double a){
+  return h._2x/2. * a;
+}
 const dcomplex operator*(dcomplex a, const halfint& h){
+  return h._2x/2. * a;
+}
+const dcomplex operator*(const halfint& h, dcomplex a){
   return h._2x/2. * a;
 }
 const bool operator==(const halfint& a, const halfint& b) {
