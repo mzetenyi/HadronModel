@@ -1,4 +1,5 @@
 #include "oldModel.hpp"
+#include "Config.hpp"
 
 
 DiracMatrix vertex3hNpi_old(double g, halfint spinParity, uint muR, FourVector pR, FourVector q) {
