@@ -21,6 +21,7 @@ using namespace std;
 #include "BornTerms.hpp"
 #include "Isospin.hpp"
 #include "Vrancx.hpp"
+#include "oldModel.hpp"
 #include "wavefunc.hpp"
 
 double formfactorRNpi(string resonance, double m2) {
@@ -61,6 +62,9 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
   if (spin == half) {
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
   } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
+    }
     return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
   } else {
     cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
@@ -94,6 +98,9 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
   if (spin == half) {
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
   } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
+    }
     return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
   } else if (spin == 5 * half) {
     return isofac * FF * vertex5hNpi(g, spin * parity, muR1, muR2, pR, q);
@@ -119,6 +126,9 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
   if (spin == half) {
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
   } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
+    }
     return vertex3hNgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
   } else if (spin == 5 * half) {
     return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
@@ -478,7 +488,7 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
     if (isSet("oldBorn")) {
       T(mu) += BornTerms_old(pi, pf, -q, mu);
     }
-    for (string resonance : {"N1440", "N1535", "1650", "R1hp", "R1hm"}) {
+    for (string resonance : {"N1440", "N1535", "N1650", "R1hp", "R1hm"}) {
       if (isSet(resonance)) {
         if (s_channel) {
           T(mu) += vertexRNpi(resonance, ps, Qs, -pf, -Qf, -q, -Qpi) *
@@ -602,8 +612,10 @@ double pionPhotoprodTest::diffsig_numeric(double costh) {
   // double pout_abs = KINout.p1().spacial().abs();
   double pin_abs = KINin.pabs();
   double pout_abs = KINout.pabs();
-  cerr << "phase space: " << setw(15) << mub(1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol) << endl;
-  cerr << "MSQR:        " << setw(15) << MSQR_numeric(costh) << endl;
+  // cerr << "phase space: " << setw(15) << mub(1. / (32. * pi_ * srt * srt) *
+  // pout_abs / pin_abs * 1. / npol) << endl; cerr << "MSQR:        " <<
+  // setw(15)
+  // << MSQR_numeric(costh) << endl;
   return 1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol *
          MSQR_numeric(costh);
 }
@@ -693,25 +705,29 @@ int main(int argc, char** argv) {
   double costh = 0.904827;
   pionPhotoprodTest PP1n(srt, 1, 0);
   double msqr = PP1n.MSQR_numeric(costh);
-  PR(msqr);
+  // PR(msqr);
+  /*
   for (double costh(-1.); costh < 1.; costh += 0.1) {
-    cout << setw(9) << costh << setw(15) << mub(PP1n.diffsig_numeric(costh)) << endl;
+    cout << setw(9) << costh << setw(15) << mub(PP1n.diffsig_numeric(costh)) <<
+  endl;
   }
-
+  */
   cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "elab" << setw(15)
        << "sigtot pi0p" << setw(15) << "sigtot pi-p" << setw(15)
-       << "sigtot pi+n" << setw(15) << "R1hp" << setw(30) << "R1hm" << setw(30)
-       << "R3hp" << setw(30)
-       << "R3hm"
-       // << setw(30) << "Breit-Wigner"
-       << endl;
-  cout << '#' << setw(150) << "width" << endl;
+       << "sigtot pi+n";
+  /*
+  cout << setw(15) << "R1hp" << setw(30) << "R1hm" << setw(30) << "R3hp"
+       << setw(30) << "R3hm";
+  */
+  // << setw(30) << "Breit-Wigner"
+  cout << endl;
+  // cout << '#' << setw(150) << "width" << endl;
   double dsrt(0.1 * GeV);
   if (Config::exists("dsrt")) dsrt = Config::get<double>("dsrt");
   for (double srt(1.1); srt < 2.1; srt += dsrt) {
     double mN = Config::get<double>("Nucleon.mass");
     double elab = (srt * srt - mN * mN) / (2. * mN);
-    /*
+    //*
     pionPhotoprodTest PPpi0p(srt, 0, 1);
     pionPhotoprodTest PPpimp(srt, -1, 1);
     pionPhotoprodTest PPpipn(srt, 1, 0);
@@ -720,16 +736,18 @@ int main(int argc, char** argv) {
     auto ppipn = mub(PPpipn.sigtot_numeric());
 
     cout << setw(10) << srt << setw(15) << elab << setw(15) << ppi0p << setw(15)
-         << ppimp << setw(15) << ppipn << setw(15)
-         << resonanceWidth("R1hp", srt) << setw(15) << widthRNpi("R1hp", 1, srt)
-         << setw(15) << resonanceWidth("R1hm", srt) << setw(15)
-         << widthRNpi("R1hm", 1, srt) << setw(15) << resonanceWidth("R3hp", srt)
-         << setw(15) << widthRNpi("R3hp", 1, srt) << setw(15)
-         << resonanceWidth("R3hm", srt) << setw(15)
-         << widthRNpi("R3hm", 1, srt)
-         //  << BreitWigner("N1520", srt*srt) << setw(15)
-         //  << POW<2>(abs(BreitWigner("N1520", srt*srt)))
-         << endl;
+         << ppimp << setw(15) << ppipn;
+    /*
+    cout << setw(15) << resonanceWidth("R1hp", srt) << setw(15)
+         << widthRNpi("R1hp", 1, srt) << setw(15) << resonanceWidth("R1hm", srt)
+         << setw(15) << widthRNpi("R1hm", 1, srt) << setw(15)
+         << resonanceWidth("R3hp", srt) << setw(15) << widthRNpi("R3hp", 1, srt)
+         << setw(15) << resonanceWidth("R3hm", srt) << setw(15)
+         << widthRNpi("R3hm", 1, srt);
+    //  << BreitWigner("N1520", srt*srt) << setw(15)
+    //  << POW<2>(abs(BreitWigner("N1520", srt*srt)))
+    */
+    cout << endl;
     //*/
   }
   return 1;
