@@ -2,6 +2,8 @@
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "files.associations": {
         "complex": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "random": "cpp",
+        "cmath": "cpp"
     }
 }
