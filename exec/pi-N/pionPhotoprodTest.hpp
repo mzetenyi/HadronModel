@@ -43,6 +43,12 @@ private:
     int Qi;
     double mR;
     double mN;
+    double mp;
+    double mn;
+    double mNi;
+    double mNf;
+    double mpipm;
+    double mpi0;
     double mpi;
     Kinema2 KINin;
     Kinema2 KINout;

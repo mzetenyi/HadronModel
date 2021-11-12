@@ -60,6 +60,18 @@ Nucleon {
   mass = 0.9389
 }
 
+proton {
+  spin = 1/2
+  isospin = 1/2
+  mass = 0.938272
+}
+
+neutron {
+  spin = 1/2
+  isospin = 1/2
+  mass = 0.939565
+}
+
 D1232 {
   spin = 3/2
   parity = 1
@@ -75,9 +87,12 @@ D1232 {
   BNsi = 0
   gngamma = -1.2784
   gpgamma = -1.2784
+  gngamma_old = -0.50789
+  gpgamma_old = -0.50789
   u_gngamma = 0.0416667
   gVMD2 = 20.9392
   g0 = 0.24683
+  g0_old = 2.1788
   u_g0 = 0
   g1 = 0
   u_g1 = 0
@@ -102,9 +117,12 @@ N1440 {
   BNsi = 0.17
   gngamma = 0.0528755
   gpgamma = 0.0621897
+  gngamma_old = 0.0528755
+  gpgamma_old = 0.0621897
   u_gngamma = 0.166667
   gVMD2 = 0.866062
   g0 = 0.384704
+  g0_old = 0.384704
   u_g0 = 0.0769231
   g1 = -1.59466
   u_g1 = 0.5
@@ -129,9 +147,12 @@ N1520 {
   BNsi = 0.01
   gngamma = 0.355091
   gpgamma = 0.355091
+  gngamma_old = 0.173478
+  gpgamma_old = 0.173478
   u_gngamma = 0.138554
   gVMD2 = 5.85106
   g0 = 0.147741
+  g0_old = 1.6037
   u_g0 = 0.0416667
   g1 = -8.1274
   u_g1 = 0.0778689
@@ -157,9 +178,12 @@ N1535 {
   BNsi = 0.06
   gngamma = 0.0582606
   gpgamma = 0.0766469
+  gngamma_old = 0.0582606
+  gpgamma_old = 0.0766469
   u_gngamma = 0.461538
   gVMD2 = 0.954265
   g0 = 0.15653
+  g0_old = 0.15653
   u_g0 = 0.119048
   g1 = -1.18577
   u_g1 = 0.109375
@@ -185,9 +209,12 @@ N1650 {
   BNsi = 0.1
   gngamma = 0.0339929
   gpgamma = 0.0403896
+  gngamma_old = 0.0339929
+  gpgamma_old = 0.0403896
   u_gngamma = 0
   gVMD2 = 0.556779
   g0 = 0.134359
+  g0_old = 0.134359
   u_g0 = 0
   g1 = -0.599393
   u_g1 = 0
@@ -212,9 +239,12 @@ N1675 {
   BNsi = 0.05
   gngamma = 0.548374
   gpgamma = 0.200238
+  gngamma_old = 0.548374
+  gpgamma_old = 0.200238
   u_gngamma = 0.5
   gVMD2 = 8.98196
   g0 = 0.000696245
+  g0_old = 0.000696245
   u_g0 = 0.025
   g1 = -8.6389
   u_g1 = 0.5
@@ -239,9 +269,12 @@ N1680 {
   BNsi = 0.14
   gngamma = 0.320495
   gpgamma = 0.901408
+  gngamma_old = 0.320495
+  gpgamma_old = 0.901408
   u_gngamma = 0.186567
   gVMD2 = 5.24946
   g0 = 0.00277481
+  g0_old = 0.00277481
   u_g0 = 0.0384615
   g1 = -17.0845
   u_g1 = 0.0833333
@@ -266,9 +299,12 @@ N1700 {
   BNsi = 0.08
   gngamma = 0.119195
   gpgamma = 0.0780312
+  gngamma_old = 0.0661116
+  gpgamma_old = 0.0432802
   u_gngamma = 0
   gVMD2 = 1.95232
   g0 = 0.0430866
+  g0_old = 0.53098
   u_g0 = 0
   g1 = -3.49859
   u_g1 = 0
@@ -293,9 +329,12 @@ N1710 {
   BNsi = 0.
   gngamma = 0.0111394
   gpgamma = 0.0225555
+  gngamma_old = 0.0111394
+  gpgamma_old = 0.0225555
   u_gngamma = 0
   gVMD2 = 0.182455
   g0 = 0.0593973
+  g0_old = 0.0593973
   u_g0 = 0
   g1 = -0.991888
   u_g1 = 0
@@ -320,9 +359,12 @@ D1600 {
   BNsi = 0
   gngamma = 0.0961241
   gpgamma = 0.0961241
+  gngamma_old = 0.0486659
+  gpgamma_old = 0.0486659
   u_gngamma = 0
   gVMD2 = 1.57444
   g0 = 0.0392509
+  g0_old = 0.441527
   u_g0 = 0
   g1 = -18.9721
   u_g1 = 0
@@ -347,9 +389,12 @@ D1620 {
   BNsi = 0
   gngamma = 0.032623
   gpgamma = 0.032623
+  gngamma_old = 0.032623
+  gpgamma_old = 0.032623
   u_gngamma = 0
   gVMD2 = 0.534341
   g0 = 0.180828
+  g0_old = 0.180828
   u_g0 = 0
   g1 = -3.64876
   u_g1 = 0

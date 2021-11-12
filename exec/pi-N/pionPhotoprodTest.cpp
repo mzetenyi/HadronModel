@@ -56,7 +56,7 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
   halfint spin = Config::get<halfint>(resonance + ".spin");
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
-  double g = Config::get<double>(resonance + ".g0");
+  double g = Config::get<double>(resonance + (isSet("oldModel") ? ".g0_old" : ".g0"));
   double FF = formfactorRNpi(resonance, pR * pR);
   double isofac = sqrt(2);
   if (spin == half) {
@@ -79,7 +79,7 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
   halfint isospin = Config::get<halfint>(resonance + ".isospin");
   int parity = Config::get<halfint>(resonance + ".parity");
   double mR = Config::get<double>(resonance + ".mass");
-  double g = Config::get<double>(resonance + ".g0");
+  double g = Config::get<double>(resonance + (isSet("oldModel") ? ".g0_old" : ".g0"));
   double FF = formfactorRNpi(resonance, pR * pR);
 
   double isofac(0);
@@ -119,9 +119,9 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
   double mR = Config::get<double>(resonance + ".mass");
   double g(0);
   if (QR == 0) {
-    g = Config::get<double>(resonance + ".gngamma");
+    g = Config::get<double>(resonance + (isSet("oldModel") ? ".gngamma_old" : ".gngamma"));
   } else {
-    g = Config::get<double>(resonance + ".gpgamma");
+    g = Config::get<double>(resonance + (isSet("oldModel") ? ".gpgamma_old" : ".gpgamma"));
   }
   if (spin == half) {
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
@@ -455,9 +455,15 @@ pionPhotoprodTest::pionPhotoprodTest(double srt, int Qpi, int Qf)
       Qi(Qf + Qpi),
       mR(Config::get<double>("N1440.mass")),
       mN(Config::get<double>("Nucleon.mass")),
-      mpi(Config::get<double>("pi_pm.mass")),
-      KINin(srt, 0, mN),
-      KINout(srt, mpi, mN) {}
+      mp(Config::get<double>("proton.mass")),
+      mn(Config::get<double>("neutron.mass")),
+      mNi((Qi==0) ? mn : mp),
+      mNf((Qf==0) ? mn : mp),
+      mpipm(Config::get<double>("pi_pm.mass")),
+      mpi0(Config::get<double>("pi_0.mass")),
+      mpi((Qpi==0) ? mpi0 : mpipm),
+      KINin(srt, 0, mNi),
+      KINout(srt, mpi, mNf) {}
 
 double pionPhotoprodTest::MSQR_numeric(double costh) {
   bool s_channel(false);
@@ -660,37 +666,39 @@ int main(int argc, char** argv) {
   cout << "N+ : " << widthRNpi("N1520", 1) << endl;
   cout << "N0 : " << widthRNpi("N1520", 0) << endl;
   */
-  /*
-  cout << "fixing coupling constants:" << endl;
-  for (string resonance : {"D1232", "N1520", "N1440", "N1535", "N1650", "N1675",
-                           "N1680", "N1700", "N1710", "D1600", "D1620"}) {
-    double g0 = Config::get<double>(resonance + ".g0");
-    double gngamma = Config::get<double>(resonance + ".gngamma");
-    double gpgamma = Config::get<double>(resonance + ".gpgamma");
-    double Gamma = Config::get<double>(resonance + ".width");
-    double BRNpi = Config::get<double>(resonance + ".BNpi");
-    double BRngamma = Config::get<double>(resonance + ".Bngamma");
-    double BRpgamma = Config::get<double>(resonance + ".Bpgamma");
-    double GNpi = Gamma * BRNpi;
-    double Gngamma = Gamma * BRngamma;
-    double Gpgamma = Gamma * BRpgamma;
-    double GNpi_calc = widthRNpi(resonance, 1);
-    double Gngamma_calc = widthRNgamma(resonance, 0);
-    double Gpgamma_calc = widthRNgamma(resonance, 1);
-    double fac_Npi = sqrt(GNpi / GNpi_calc);
-    double fac_ngamma = sqrt(Gngamma / Gngamma_calc);
-    double fac_pgamma = sqrt(Gpgamma / Gpgamma_calc);
-    cout << resonance << " -> N+pi   - g0: " << setw(12) << g0 << " -> "
-         << setw(12) << g0 * fac_Npi << " ( width: " << setw(12) << GNpi_calc
-         << " -> " << setw(12) << GNpi << ")" << endl;
-    cout << resonance << " -> n+gamma - g: " << setw(12) << gngamma << " -> "
-         << setw(12) << gngamma * fac_ngamma << " ( width: " << setw(12)
-         << Gngamma_calc << " -> " << setw(12) << Gngamma << ")" << endl;
-    cout << resonance << " -> p+gamma - g: " << setw(12) << gpgamma << " -> "
-         << setw(12) << gpgamma * fac_pgamma << " ( width: " << setw(12)
-         << Gpgamma_calc << " -> " << setw(12) << Gpgamma << ")" << endl;
+  //*
+  if (isSet("fixCouplings")) {
+    cout << "fixing coupling constants:" << endl;
+    for (string resonance : {"D1232", "N1520", "N1440", "N1535", "N1650", "N1675",
+                            "N1680", "N1700", "N1710", "D1600", "D1620"}) {
+      double g0 = Config::get<double>(resonance + ".g0");
+      double gngamma = Config::get<double>(resonance + ".gngamma");
+      double gpgamma = Config::get<double>(resonance + ".gpgamma");
+      double Gamma = Config::get<double>(resonance + ".width");
+      double BRNpi = Config::get<double>(resonance + ".BNpi");
+      double BRngamma = Config::get<double>(resonance + ".Bngamma");
+      double BRpgamma = Config::get<double>(resonance + ".Bpgamma");
+      double GNpi = Gamma * BRNpi;
+      double Gngamma = Gamma * BRngamma;
+      double Gpgamma = Gamma * BRpgamma;
+      double GNpi_calc = widthRNpi(resonance, 1);
+      double Gngamma_calc = widthRNgamma(resonance, 0);
+      double Gpgamma_calc = widthRNgamma(resonance, 1);
+      double fac_Npi = sqrt(GNpi / GNpi_calc);
+      double fac_ngamma = sqrt(Gngamma / Gngamma_calc);
+      double fac_pgamma = sqrt(Gpgamma / Gpgamma_calc);
+      cout << resonance << " -> N+pi   - g0: " << setw(12) << g0 << " -> "
+          << setw(12) << g0 * fac_Npi << " ( width: " << setw(12) << GNpi_calc
+          << " -> " << setw(12) << GNpi << ")" << endl;
+      cout << resonance << " -> n+gamma - g: " << setw(12) << gngamma << " -> "
+          << setw(12) << gngamma * fac_ngamma << " ( width: " << setw(12)
+          << Gngamma_calc << " -> " << setw(12) << Gngamma << ")" << endl;
+      cout << resonance << " -> p+gamma - g: " << setw(12) << gpgamma << " -> "
+          << setw(12) << gpgamma * fac_pgamma << " ( width: " << setw(12)
+          << Gpgamma_calc << " -> " << setw(12) << Gpgamma << ")" << endl;
+    }
   }
-  */
+  //*/
   /*
    cout << "# decay widths" << endl;
    cout << "#" << setw(8) << "JR" << setw(15) << "width" << endl;
