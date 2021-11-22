@@ -7,17 +7,17 @@ results=$projectHome/exec/pi-N/results/
 mkdir -p $results
 mkdir -p $results/pionPhotoprod/
 
-#./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born > $results/pionPhotoprod/pionPhotoprod_Born
+#./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born > $results/pionPhotoprod/pionPhotoprod_Born
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch > $results/pionPhotoprod/pionPhotoprod_D1232sch
 #./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1440 sch > $results/pionPhotoprod/pionPhotoprod_N1440sch
 #./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1520 sch > $results/pionPhotoprod/pionPhotoprod_N1520sch
 #./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1535 sch > $results/pionPhotoprod/pionPhotoprod_N1535sch
-#./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born D1232 N1440 N1520 N1535 sch > $results/pionPhotoprod/pionPhotoprod_all_sch
+#./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born D1232 N1440 N1520 N1535 sch > $results/pionPhotoprod/pionPhotoprod_all_sch
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 uch > $results/pionPhotoprod/pionPhotoprod_D1232uch
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1440 uch > $results/pionPhotoprod/pionPhotoprod_N1440uch
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1520 uch > $results/pionPhotoprod/pionPhotoprod_N1520uch
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 N1535 uch > $results/pionPhotoprod/pionPhotoprod_N1535uch
-./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born D1232 N1440 N1520 N1535 > $results/pionPhotoprod/pionPhotoprod_all
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born D1232 N1440 N1520 N1535 > $results/pionPhotoprod/pionPhotoprod_all
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch oldModel > $results/pionPhotoprod/pionPhotoprod_D1232sch_old
-./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born D1232 N1440 N1520 N1535 sch oldModel > $results/pionPhotoprod/pionPhotoprod_all_sch_old
-./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born D1232 N1440 N1520 N1535 oldModel > $results/pionPhotoprod/pionPhotoprod_all_old
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born D1232 N1440 N1520 N1535 sch oldModel > $results/pionPhotoprod/pionPhotoprod_all_sch_old
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born D1232 N1440 N1520 N1535 oldModel > $results/pionPhotoprod/pionPhotoprod_all_old

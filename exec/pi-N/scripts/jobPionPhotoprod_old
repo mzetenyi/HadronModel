@@ -8,4 +8,4 @@ mkdir -p $results
 mkdir -p $results/pionPhotoprod/
 
 ./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch oldModel > $results/pionPhotoprod/pionPhotoprod_D1232sch_old
-./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 cutoffBorn Born D1232 N1440 N1520 N1535 sch oldModel > $results/pionPhotoprod/pionPhotoprod_all_sch_old
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 Born D1232 N1440 N1520 N1535 sch oldModel > $results/pionPhotoprod/pionPhotoprod_all_sch_old

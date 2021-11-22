@@ -420,7 +420,7 @@ DiracMatrix BornTerms_old(FourVector pi, FourVector pf, FourVector q, uint mu) {
   static const double alpha(1 / 137.036);
   static const double e(sqrt(4. * pi_ * alpha));
   static const double fac = e * f_NNpi / mpi * sqrt(2);
-  if (Config::exists("cutoffBorn")) {
+  if (not Config::exists("noBornCutoff")) {
     double LBorn = 0.63;  // from Zetenyi, Wolf PRC 2012
     if (Config::exists("LBorn")) {
       LBorn = Config::get<double>("LBorn");
