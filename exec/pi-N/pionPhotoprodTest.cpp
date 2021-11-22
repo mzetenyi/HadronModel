@@ -51,6 +51,15 @@ double formfactorRNpi(string resonance, double m2) {
   return ret;
 }
 
+double uchCutoff(string resonance, double q) {
+  double Lambda_u = 0.3*GeV;
+  if (isSet("Lambda_u")) {
+    Lambda_u = Config::get<double>("Lambda_u");
+  }
+  halfint J=Config::get<halfint>(resonance+".spin");
+  return pow(Lambda_u/(Lambda_u+q*q),1.*J);
+}
+
 DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
                        FourVector q, uint muR1, uint muR2) {
   halfint spin = Config::get<halfint>(resonance + ".spin");
@@ -502,9 +511,10 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
                    vertexRNgamma(resonance, -ps, -Qs, pi, k, mu);
         }
         if (u_channel) {
+          double uchCut = uchCutoff(resonance,KINout.pabs());
           T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, mu) *
                    propR(resonance, pu) *
-                   vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi);
+                   vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi) * uchCut;
           /*
           cerr << "mu = " << mu << "   --------------------------" << endl;
           PR(pu); PR(pu*pu);
@@ -527,10 +537,11 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
                        vertexRNgamma(resonance, -ps, -Qs, pi, k, mu, nu2);
             }
             if (u_channel) {
+              double uchCut = uchCutoff(resonance,KINout.pabs());
               T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, nu1) *
                        sign_(nu1) * propR(resonance, pu, nu1, nu2) *
                        sign_(nu2) *
-                       vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi, nu2);
+                       vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi, nu2) * uchCut;
             }
           }
         }
@@ -552,12 +563,13 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
                       vertexRNgamma(resonance, -ps, -Qs, pi, k, mu, nu1p, nu2p);
                 }
                 if (u_channel) {
+                  double uchCut = uchCutoff(resonance,KINout.pabs());
                   T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, nu1, nu2) *
                            sign_(nu1) * sign_(nu2) *
                            propR(resonance, pu, nu1, nu2, nu1p, nu2p) *
                            sign_(nu1p) * sign_(nu2p) *
                            vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi,
-                                      nu1p, nu2p);
+                                      nu1p, nu2p) * uchCut;
                 }
               }
             }
