@@ -37,6 +37,7 @@ public:
     double diffsig_numeric(double costh);
     //double sigtot_analytic();
     double sigtot_numeric();
+    double threshold() const;
 private:
     double srt;
     int Qpi;

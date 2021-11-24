@@ -625,6 +625,7 @@ MSQRraw_analytic(costh);
 }
 */
 double pionPhotoprodTest::diffsig_numeric(double costh) {
+  if (srt<threshold()) return NAN;
   int npol(4);
   // double pin_abs = KINin.p1().spacial().abs();
   // double pout_abs = KINout.p1().spacial().abs();
@@ -653,6 +654,7 @@ double pionPhotoprodTest::sigtot_analytic() {
 }
 */
 double pionPhotoprodTest::sigtot_numeric() {
+  if (srt<threshold()) return NAN;
   double dcosth = 0.01;
   if (Config::exists("dcosth")) dcosth = Config::get<double>("dcosth");
   if (Config::exists("nth")) {
@@ -664,6 +666,10 @@ double pionPhotoprodTest::sigtot_numeric() {
     sum += diffsig_numeric(costh);
   }
   return sum * dcosth;
+}
+
+double pionPhotoprodTest::threshold() const {
+  return KINout.threshold();
 }
 
 int main(int argc, char** argv) {
@@ -744,7 +750,7 @@ int main(int argc, char** argv) {
   // cout << '#' << setw(150) << "width" << endl;
   double dsrt(0.1 * GeV);
   if (Config::exists("dsrt")) dsrt = Config::get<double>("dsrt");
-  for (double srt(1.1); srt < 2.1; srt += dsrt) {
+  for (double srt(0.9); srt < 2.1; srt += dsrt) {
     double mN = Config::get<double>("Nucleon.mass");
     double elab = (srt * srt - mN * mN) / (2. * mN);
     //*
@@ -755,8 +761,10 @@ int main(int argc, char** argv) {
     auto ppimp = mub(PPpimp.sigtot_numeric());
     auto ppipn = mub(PPpipn.sigtot_numeric());
 
-    cout << setw(10) << srt << setw(15) << elab << setw(15) << ppi0p << setw(15)
-         << ppimp << setw(15) << ppipn;
+    cout << setw(10) << srt << setw(15) << elab 
+        << setw(15) << ppi0p
+        << setw(15) << ppimp
+        << setw(15) << ppipn;
     /*
     cout << setw(15) << resonanceWidth("R1hp", srt) << setw(15)
          << widthRNpi("R1hp", 1, srt) << setw(15) << resonanceWidth("R1hm", srt)
