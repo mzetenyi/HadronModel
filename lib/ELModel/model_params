@@ -2,6 +2,8 @@
 // rho width parametrization is Manley with R=0.8 fm, like in Bonn-Gatchina PWA
 // newsigns: opposite sign for baryon-rho meson couplings (NNrho, RNrho)
 //          - corresponds to change of sign of Lagrangians
+// the coupling constants 'gngamma_old', 'gpgamma_old', and 'g0_old' belong to the
+// Lagrangian model of the 2012 paper. The values are obtained from PDG, like in the new model.
 rhospec=0
 
 gsipipi = 4.01631
@@ -87,8 +89,8 @@ D1232 {
   BNsi = 0
   gngamma = -1.2784
   gpgamma = -1.2784
-  gngamma_old = -0.50789
-  gpgamma_old = -0.50789
+  gngamma_old = 0.50789
+  gpgamma_old = 0.50789
   u_gngamma = 0.0416667
   gVMD2 = 20.9392
   g0 = 0.24683
