@@ -1,3 +1,5 @@
+off statistics;
+
 s mN,mD,m,t;
 in l1,l2,l,mu,nu;
 v k1,k2,k3,k4,k;
