@@ -18,6 +18,8 @@ double Kinema2::E1() const { return (M * M + m1 * m1 - m2 * m2) / (2. * M); }
 
 double Kinema2::E2() const { return (M * M - m1 * m1 + m2 * m2) / (2. * M); }
 
+double Kinema2::threshold() const { return m1+m2; }
+
 FourVector Kinema2::P() const { return FourVector(M, 0, 0, 0); }
 
 FourVector Kinema2::p1(double costh, double phi) const {

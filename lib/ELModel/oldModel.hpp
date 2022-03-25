@@ -12,5 +12,7 @@ DiracMatrix vertex3hNrho_old(double g, halfint spinParity, uint muR, FourVector 
 
 DiracMatrix vertex3hNgamma_old(double g, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
 
+/** spin-3/2 propagator, INCLUDING the terms that give 0 contrib. in the case of Vrancx Lagrangians. */
+DiracMatrix P3h_old(FourVector p, double m, uint mu, uint nu);
 
 #endif // OLDMODEL_HPP

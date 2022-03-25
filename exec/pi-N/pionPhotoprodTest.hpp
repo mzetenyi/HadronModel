@@ -17,6 +17,7 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR, FourVector pN
 DiracMatrix pro1half(FourVector p, double m);
 double resonanceWidth(string resonance, double m);
 dcomplex BreitWigner(string resonance, double srt);
+DiracMatrix P3half(FourVector p, double m, uint mu, uint nu);
 DiracMatrix propR(string resonance, FourVector p, uint muR1=0, uint nuR1=0, uint muR2=0, uint nuR2=0);
 DiracMatrix proN(FourVector p);
 double widthRNpi(string resonance, double M);
