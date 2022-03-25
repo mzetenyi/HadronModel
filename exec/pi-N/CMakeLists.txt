@@ -45,3 +45,9 @@ target_include_directories(rhoPhase PUBLIC ../../lib/FeynTools ../../lib/ELModel
 target_link_libraries(rhoPhase FeynTools)
 target_link_libraries(rhoPhase ELModel)
 
+add_executable(fit_resonance_couplings fit_resonance_couplings.cpp cutoffs.cpp cutoffs.hpp resdec.cpp resdec.hpp)
+
+target_include_directories(fit_resonance_couplings PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_link_libraries(fit_resonance_couplings FeynTools)
+target_link_libraries(fit_resonance_couplings ELModel)
