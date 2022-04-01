@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 #include <string>
 #include <cmath>
 #include <boost/algorithm/string.hpp>
