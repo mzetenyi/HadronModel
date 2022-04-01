@@ -31,6 +31,6 @@
 *.out
 *.app
 
-_build
+build
 
 exec/pi-N/results
