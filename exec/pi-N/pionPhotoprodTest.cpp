@@ -152,6 +152,36 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
   }
 }
 
+DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1,
+                          uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g(0);
+  if (QR == 0) {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gngamma_old" : ".gngamma"));
+  } else {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gpgamma_old" : ".gpgamma"));
+  }
+  if (spin == half) {
+    return vertex1hNgamma(g, spin * parity, pR, mu, k);
+  } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
+    }
+    return vertexN3hgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
+  } else if (spin == 5 * half) {
+    return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
+  } else {
+    cerr << "vertexRNgamma: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
+    exit(0);
+  }
+}
+
 DiracMatrix pro1half(FourVector p, double m) {
   return gamma_(p) + m * gamma_unit;
 }
@@ -546,7 +576,7 @@ double pionPhotoprodTest::MSQR_numeric(double costh) {
             }
             if (u_channel) {
               double uchCut = uchCutoff(resonance, KINout.pabs());
-              T(mu) += vertexRNgamma(resonance, pu, Qu, -pf, k, nu1) *
+              T(mu) += vertexNRgamma(resonance, pu, Qu, -pf, k, mu, nu1) *
                        sign_(nu1) * propR(resonance, pu, nu1, nu2) *
                        sign_(nu2) *
                        vertexRNpi(resonance, -pu, -Qu, pi, Qi, -q, -Qpi, nu2) *
@@ -637,14 +667,8 @@ MSQRraw_analytic(costh);
 double pionPhotoprodTest::diffsig_numeric(double costh) {
   if (srt < threshold()) return NAN;
   int npol(4);
-  // double pin_abs = KINin.p1().spacial().abs();
-  // double pout_abs = KINout.p1().spacial().abs();
   double pin_abs = KINin.pabs();
   double pout_abs = KINout.pabs();
-  // cerr << "phase space: " << setw(15) << mub(1. / (32. * pi_ * srt * srt) *
-  // pout_abs / pin_abs * 1. / npol) << endl; cerr << "MSQR:        " <<
-  // setw(15)
-  // << MSQR_numeric(costh) << endl;
   return 1. / (32. * pi_ * srt * srt) * pout_abs / pin_abs * 1. / npol *
          MSQR_numeric(costh);
 }
@@ -759,6 +783,25 @@ int main(int argc, char** argv) {
            << endl;
     }
     return 1;
+  }
+  if (isSet("diffsigma")) {
+    double srt(1.4 * GeV);
+    if (isSet("srt")) srt = Config::get<double>("srt");
+    cout << "# diff. sigma, sqrt(s) = " << srt << " GeV" << endl;
+    cout << "#" << setw(9) << "cos(theta)" << setw(15) << "diffsig pi0p"
+         << setw(15) << "diffsig pi-p" << setw(15) << "diffsig pi+n" << endl;
+    pionPhotoprodTest PPpi0p(srt, 0, 1);
+    pionPhotoprodTest PPpimp(srt, -1, 1);
+    pionPhotoprodTest PPpipn(srt, 1, 0);
+    double dcosth(0.1 * GeV);
+    for (double costh(-1.); costh <= 1.; costh += dcosth) {
+      auto ppi0p = mub(PPpi0p.diffsig_numeric(costh));
+      auto ppimp = mub(PPpimp.diffsig_numeric(costh));
+      auto ppipn = mub(PPpipn.diffsig_numeric(costh));
+      cout << setw(10) << costh << setw(15) << ppi0p << setw(15) << ppimp
+           << setw(15) << ppipn << endl;
+    }
+    return 1.;
   }
   //*/
   cout << "#" << setw(9) << "sqrt(s)" << setw(15) << "elab" << setw(15)

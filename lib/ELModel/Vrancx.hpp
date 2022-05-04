@@ -60,8 +60,10 @@ DiracMatrix vertex3hNpi(double g, halfint spinParity, uint muR, FourVector pR, F
 DiracMatrix vertex3hNsi(double g, halfint spinParity, uint muR, FourVector pR, FourVector q);
 
 DiracMatrix vertex3hNrho(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertexN3hrho(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
 
 DiracMatrix vertex3hNgamma(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertexN3hgamma(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
 
 DiracMatrix vertex5hNpi(double g, halfint spinParity, uint mu, uint nu, FourVector pR, FourVector q);
 
