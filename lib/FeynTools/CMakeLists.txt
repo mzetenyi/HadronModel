@@ -9,8 +9,8 @@ set(SOURCES
     Histogram.hpp
     Isospin.cpp
     Isospin.hpp
-    Kinema.hpp
     Kinema.cpp
+    Kinema.hpp
     MultiArray.cpp
     MultiArray.hpp
     RandomNumberGenerator.cpp

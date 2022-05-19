@@ -9,6 +9,10 @@ double Gamma_rho(double m); ///< Mass dependence of total width = width of rho -
 
 double Gamma_R(const std::string& res, double s, double m0, double G0, int l);
 
+double resonanceWidth(const std::string& resonance, double m);
+
+dcomplex BreitWigner(std::string resonance, double srt);
+
 dcomplex BW(double s, double M, double Gamma);
 
 class GammaResonance {

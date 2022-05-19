@@ -7,6 +7,7 @@ using namespace Vectors;
 using namespace Spinors;
 #include "units.hpp"
 using namespace units_GeV;
+//#include "Isospin.hpp"
 
 // bool vectorTerm();
 // bool tensorTerm();
@@ -78,11 +79,23 @@ DiracMatrix vertex3h3hpi(double g,
 			 halfint spinParityD, uint muD, FourVector pD, 
 			 FourVector q);
 
+DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1=0, uint muR2=0);
+
+DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN, int QN, FourVector q, int Qpi, uint muR1=0, uint muR2=0);
+
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
+
+DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
+
 /** spin-3/2 propagator, without the terms that give 0 contrib. in the case of Vrancx Lagrangians. */
 DiracMatrix P3h(FourVector p, double m, uint mu, uint nu);
 
 /** spin-5/2 propagator, without the terms that give 0 contrib. in the case of Vrancx Lagrangians. */
 DiracMatrix P5h(FourVector p, double m, uint mu, uint nu, uint la, uint ro);
+
+DiracMatrix pro1half(FourVector p, double m);
+
+DiracMatrix proN(FourVector p);
 
 DiracMatrix pro3half(FourVector p, double m, uint mu, uint nu);
 

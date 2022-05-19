@@ -4,6 +4,9 @@
 
 #include "Config.hpp"
 #include "utils.hpp"
+#include "oldModel.hpp"
+#include "Isospin.hpp"
+#include "FormFactors.hpp"
 
 // bool vectorTerm() {
 //   static bool vterm(Config::exists("vector") or
@@ -424,6 +427,129 @@ DiracMatrix vertex5hNgamma(double g1, double g2, double g3, halfint spinParity,
   return vertex5hNrho(g1, g2, g3, spinParity, si, ta, pR, la, k);
 }
 
+DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
+                       FourVector q, uint muR1, uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g =
+      Config::get<double>(resonance + (isSet("oldModel") ? ".g0_old" : ".g0"));
+  double FF = formfactorRNpi(resonance, pR * pR);
+  double isofac = sqrt(2);
+  if (spin == half) {
+    return isofac * FF * vertex1hNpi(g, spin * parity, q);
+  } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
+    }
+    return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
+  } else {
+    cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
+    exit(0);
+  }
+}
+
+DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
+                       int QN, FourVector q, int Qpi, uint muR1, uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  halfint isospin = Config::get<halfint>(resonance + ".isospin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g =
+      Config::get<double>(resonance + (isSet("oldModel") ? ".g0_old" : ".g0"));
+  double FF = formfactorRNpi(resonance, pR * pR);
+
+  double isofac(0);
+  if (isospin == half) {
+    isofac = isospin_1h1h1(QR, -QN, -Qpi);
+  } else if (isospin == 3 * half) {
+    if (pR.future()) {  // incoming resonance
+      isofac = isospin_3h1h1(QR, -QN, -Qpi);
+    } else {  // outgoing resonance
+      isofac = isospin_3h1h1(-QR, QN, Qpi);
+    }
+  } else {
+    cerr << "vertexRNpi: isospin= " << isospin << " not implemented" << endl;
+  }
+
+  if (spin == half) {
+    return isofac * FF * vertex1hNpi(g, spin * parity, q);
+  } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
+    }
+    return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
+  } else if (spin == 5 * half) {
+    return isofac * FF * vertex5hNpi(g, spin * parity, muR1, muR2, pR, q);
+  } else {
+    cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
+    exit(0);
+  }
+}
+
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1,
+                          uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g(0);
+  if (QR == 0) {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gngamma_old" : ".gngamma"));
+  } else {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gpgamma_old" : ".gpgamma"));
+  }
+  if (spin == half) {
+    return vertex1hNgamma(g, spin * parity, pR, mu, k);
+  } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
+    }
+    return vertex3hNgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
+  } else if (spin == 5 * half) {
+    return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
+  } else {
+    cerr << "vertexRNgamma: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
+    exit(0);
+  }
+}
+
+DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1,
+                          uint muR2) {
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  int parity = Config::get<halfint>(resonance + ".parity");
+  double mR = Config::get<double>(resonance + ".mass");
+  double g(0);
+  if (QR == 0) {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gngamma_old" : ".gngamma"));
+  } else {
+    g = Config::get<double>(resonance +
+                            (isSet("oldModel") ? ".gpgamma_old" : ".gpgamma"));
+  }
+  if (spin == half) {
+    return vertex1hNgamma(g, spin * parity, pR, mu, k);
+  } else if (spin == 3 * half) {
+    if (isSet("oldModel")) {
+      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
+    }
+    return vertexN3hgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
+  } else if (spin == 5 * half) {
+    return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
+  } else {
+    cerr << "vertexRNgamma: spin-parity " << spin << ((parity > 0) ? "+" : "-")
+         << " not implemented" << endl;
+    exit(0);
+  }
+}
+
+
 /**
    Projectors used in propagators. Terms proportional to the momentum are
    dropped, because the vertices give zero when contracted with the momentum.
@@ -449,6 +575,20 @@ DiracMatrix P5h(FourVector p, double m, uint mu, uint nu, uint la, uint ro) {
              10.;
 }
 
+/**
+   Spin 1/2 projector.
+*/
+DiracMatrix pro1half(FourVector p, double m) {
+  return gamma_(p) + m * gamma_unit;
+}
+
+/**
+   Nucleon projector.
+*/
+DiracMatrix proN(FourVector p) {
+  double mN(Config::get<double>("Nucleon.mass"));
+  return gamma_(p) + mN * gamma_unit;
+}
 /**
    Spin 3/2 projector.
 */

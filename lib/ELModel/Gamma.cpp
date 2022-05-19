@@ -4,8 +4,10 @@
 #include "Gamma.hpp"
 #include "Config.hpp"
 #include "units.hpp"
-using namespace units_GeV;
+#include "FormFactors.hpp"
+#include "Kinema.hpp"
 
+using namespace units_GeV;
 
 double Gamma_rho(double m) { ///< Mass dependence of total width = width of rho -> pi + pi
   const double delta(0.2467*GeV);  // corresponds to  R = 1/delta = 0.8 fm 
@@ -49,6 +51,31 @@ double Gamma_R(const std::string& res, double s, double m0, double G0, int l) {
     return G0 * m0/sqrt(s) * pow(q/q0,2*l+1) * pow((q0*q0+d2)/(q*q+d2),l+1);
   }
   return 0;
+}
+
+double resonanceWidth(const string& resonance, double m) {
+  if (Config::exists("noRwidth")) return 0;
+  double Gamma0 = Config::get<double>(resonance + ".width");
+  if (Config::exists("constRwidth")) {
+    return Gamma0;
+  }
+  double mN = Config::get<double>("Nucleon.mass");
+  double mpi = Config::get<double>("pi_pm.mass");
+  if (m < mN + mpi) return 0;
+  double mR = Config::get<double>(resonance + ".mass");
+  int l = Config::get<double>(resonance + ".l");
+  double q0 = momentum(mR, mN, mpi);
+  double q = momentum(m, mN, mpi);
+  double FF = formfactorRNpi(resonance, m * m);
+  return Gamma0 * pow(q / q0, 2. * l + 1.) * FF * FF;
+}
+
+dcomplex BreitWigner(string resonance, double s) {
+  if (Config::exists("noBW")) return 1;
+  double srt = (s > 0) ? sqrt(s) : 0;
+  double mR(Config::get<double>(resonance + ".mass"));
+  double Gamma = resonanceWidth(resonance, srt);
+  return 1. / (s - mR * mR + i_ * srt * Gamma);
 }
 
 dcomplex BW(double s, double M, double Gamma) {
