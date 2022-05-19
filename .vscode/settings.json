@@ -4,6 +4,7 @@
         "complex": "cpp",
         "iomanip": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "iostream": "cpp"
     }
 }
