@@ -16,8 +16,6 @@ class Kinema2 {
   FourVector P() const;
   FourVector p1(double costh = 0, double phi = 0) const;
   FourVector p2(double costh = 0, double phi = 0) const;
-
- private:
   const double M;
   const double m1;
   const double m2;
