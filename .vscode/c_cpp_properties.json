@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/FeynTools",
                 "${workspaceFolder}/lib/FeynTools"
             ],
             "defines": [],
