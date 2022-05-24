@@ -4,7 +4,6 @@
 #include "Vectors.hpp"
 using namespace Vectors;
 #include "FeynmanRules.hpp"
-#include "MultiArray.hpp"
 #include "wavefunc.hpp"
 
 Amplitude_NN_NDelta::Amplitude_NN_NDelta(double srt, int QN, int QD)
@@ -50,28 +49,18 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
   ubar_ ubarD(3 * half, p4);
   u_ u1(half, p1);
   u_ u2(half, p2);
-  MultiArray<dcomplex> helicityAmplitude(idx_s1h, idx_s1h, idx_s1h, idx_s3h);
-  for (halfint la1 : {-half, half}) {
-    for (halfint la2 : {-half, half}) {
-      for (halfint la3 : {-half, half}) {
-        for (halfint la4 : {-3 * half, -half, half, 3 * half}) {
-          for (int mu : {0, 1, 2, 3}) {
-            helicityAmplitude(la1, la2, la3, la4) +=
-                ubarN(0, la3) * vertexNNpi(QN, -ppi, -Qpi) * u1(0, la1) *
-                scalarPropagator(ppi, mpi) * sign_(mu) * ubarD(mu, la4) *
-                vertexDNpi(QD, ppi, Qpi, mu) * u2(0, la2);
-          }
-        }
-      }
-    }
-  }
   double MSQR(0);
   for (halfint la1 : {-half, half}) {
     for (halfint la2 : {-half, half}) {
       for (halfint la3 : {-half, half}) {
         for (halfint la4 : {-3 * half, -half, half, 3 * half}) {
-          dcomplex amp = helicityAmplitude(la1,la2,la3,la4);
-          MSQR += real(amp*conj(amp));
+          dcomplex helAmp(0);
+          for (int mu : {0, 1, 2, 3}) {
+            helAmp += ubarN(0, la3) * vertexNNpi(QN, -ppi, -Qpi) * u1(0, la1) *
+                      scalarPropagator(ppi, mpi) * sign_(mu) * ubarD(mu, la4) *
+                      vertexDNpi(QD, ppi, Qpi, mu) * u2(0, la2);
+          }
+          MSQR += real(helAmp * conj(helAmp));
         }
       }
     }
