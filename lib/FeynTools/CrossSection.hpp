@@ -17,15 +17,13 @@ class CrossSectionSS {
            amplitude.MSQR();
   }
   double sigmaTot() {
-    int ntheta = 20;
-    if (isSet("CrossSection.ntheta"))
-      ntheta = Config::get<int>("CrossSection.ntheta");
-    double dtheta = 2. / ntheta;
+    int ncosth = getParam<int>("ncosth",20);
+    double dcosth = 2. / ncosth;
     double sum(0.);
-    for (double theta(-1. + dtheta); theta < 1.; theta += dtheta) {
-      sum += dsigma_dcosth(theta);
+    for (double costh(-1. + dcosth); costh < 1.; costh += dcosth) {
+      sum += dsigma_dcosth(costh);
     }
-    return sum / ntheta * 2.;
+    return sum / ncosth * 2.;
   }
 
  private:
@@ -44,9 +42,7 @@ class CrossSectionSR {
            amplitude.MSQR(m, costh) * 2. * m * amplitude.spectralFunction(m);
   }
   double dsigma_dm(double m) {
-    int ncosth = 20;
-    if (isSet("CrossSection.ntheta"))
-      ncosth = Config::get<int>("CrossSection.ncosth");
+    int ncosth = getParam<int>("ncosth",20);
     double dcosth = 2. / ncosth;
     double sum(0.);
     for (double costh(-1. + dcosth); costh < 1.; costh += dcosth) {
@@ -59,8 +55,7 @@ class CrossSectionSR {
     double srt = kinOut.M;
     double m1 = kinOut.m1;
     double mmax = srt - m1;
-    int nm = 20;
-    if (isSet("CrossSection.nm")) nm = Config::get<int>("CrossSection.nm");
+    int nm = getParam<int>("nm",20);
     double dm = 2. / nm;
     double sum(0.);
     for (double m(dm); m < mmax; m += dm) {
