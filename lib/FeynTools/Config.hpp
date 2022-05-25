@@ -115,5 +115,11 @@ private:
 
 bool isSet(const std::string&);
 
+template <typename T>
+T getParam(const std::string& key, T defaultVal) {
+  if (isSet(key)) return Config::get<T>("key");
+  return defaultVal;
+}
+
 #endif // CONFIG_HPP
 
