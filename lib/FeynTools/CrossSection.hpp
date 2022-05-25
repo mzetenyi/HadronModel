@@ -12,7 +12,7 @@ class CrossSectionSS {
   double dsigma_dcosth(double costh) {
     Kinema2 kinIn = amplitude.getInputKinematics();
     Kinema2 kinOut = amplitude.getOutputKinematics();
-    srt = kinIn.M;
+    double srt = kinIn.M;
     return 1. / (64. * pi_ * pi_ * srt * srt) * kinOut.pabs() / kinIn.pabs() *
            amplitude.MSQR();
   }
@@ -25,7 +25,7 @@ class CrossSectionSS {
     for (double theta(-1. + dtheta); theta < 1.; theta += dtheta) {
       sum += dsigma_dcosth(theta);
     }
-    return sum / n * 2.;
+    return sum / ntheta * 2.;
   }
 
  private:
@@ -38,7 +38,7 @@ class CrossSectionSR {
   CrossSectionSR(Amplitude amp) : amplitude(amp) {}
   double dsigma_dm_dcosth(double m, double costh) {
     Kinema2 kinIn = amplitude.getInputKinematics();
-    Kinema2 kinOut = amplitude.getOutputKinematics(double m);
+    Kinema2 kinOut = amplitude.getOutputKinematics(m);
     double srt = kinIn.M;
     return 1. / (64. * pi_ * pi_ * srt * srt) * kinOut.pabs() / kinIn.pabs() *
            amplitude.MSQR(m, costh) * 2. * m * amplitude.spectralFunction(m);
@@ -47,12 +47,12 @@ class CrossSectionSR {
     int ncosth = 20;
     if (isSet("CrossSection.ntheta"))
       ncosth = Config::get<int>("CrossSection.ncosth");
-    double dcosth = 2. / ntheta;
+    double dcosth = 2. / ncosth;
     double sum(0.);
     for (double costh(-1. + dcosth); costh < 1.; costh += dcosth) {
       sum += dsigma_dm_dcosth(m, costh);
     }
-    return sum / n * 2.;
+    return sum / ncosth * 2.;
   }
   double sigmaTot() {
     Kinema2 kinOut = amplitude.getOutputKinematics(0.);
@@ -66,7 +66,7 @@ class CrossSectionSR {
     for (double m(dm); m < mmax; m += dm) {
       sum += dsigma_dm(m);
     }
-    return sum / n * mmax;
+    return sum / nm * mmax;
   }
 
  private:
