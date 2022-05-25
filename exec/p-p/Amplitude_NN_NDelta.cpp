@@ -1,4 +1,4 @@
-#include "NN_NDelta.hpp"
+#include "Amplitude_NN_NDelta.hpp"
 
 #include "Config.hpp"
 #include "Vectors.hpp"
