@@ -127,5 +127,9 @@ T getParam(const std::string& key, T defaultVal) {
   return defaultVal;
 }
 
+template <typename T>
+T getParam(const std::string& key) {
+  return Config::get<T>(key);
+}
 #endif // CONFIG_HPP
 
