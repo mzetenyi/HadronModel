@@ -1,5 +1,6 @@
 f_NNpi = 1.008
 f_DNpi = 2.202
+Lambda = 0.63
 mpi = 0.138
 mN = 0.938
 mD = 1.232
