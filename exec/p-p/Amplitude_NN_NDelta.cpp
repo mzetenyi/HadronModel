@@ -39,12 +39,14 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
   FourVector p2 = kinIn.p2();
   FourVector p3 = kinOut.p1(costh);
   FourVector p4 = kinOut.p2(costh);
-  FourVector ppi = p1 - p3;
+  FourVector ppi_t = p1 - p3;
+  FourVector ppi_u = p2 - p3;
   int Q1 = 1;
   int Q2 = 1;
   int Q3 = QN;
   int Q4 = QD;
-  int Qpi = Q1 - Q3;
+  int Qpi_t = Q1 - Q3;
+  int Qpi_u = Q2 - Q3;
   ubar_ ubarN(half, p3);
   ubar_ ubarD(3 * half, p4);
   u_ u1(half, p1);
@@ -56,9 +58,14 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
         for (halfint la4 : {-3 * half, -half, half, 3 * half}) {
           dcomplex helAmp(0);
           for (int mu : {0, 1, 2, 3}) {
-            helAmp += ubarN(0, la3) * vertexNNpi(QN, -ppi, -Qpi) * u1(0, la1) *
-                      scalarPropagator(ppi, mpi) * sign_(mu) * ubarD(mu, la4) *
-                      vertexDNpi(QD, ppi, Qpi, mu) * u2(0, la2);
+            helAmp += ubarN(0, la3) * vertexNNpi(QN, -ppi_t, -Qpi_t) *
+                      u1(0, la1) * scalarPropagator(ppi_t, mpi) * sign_(mu) *
+                      ubarD(mu, la4) * vertexDNpi(QD, ppi_t, Qpi_t, mu) *
+                      u2(0, la2);
+            helAmp += ubarN(0, la3) * vertexNNpi(QN, -ppi_u, -Qpi_u) *
+                      u2(0, la2) * scalarPropagator(ppi_u, mpi) * sign_(mu) *
+                      ubarD(mu, la4) * vertexDNpi(QD, ppi_u, Qpi_u, mu) *
+                      u1(0, la1);
           }
           MSQR += real(helAmp * conj(helAmp));
         }
