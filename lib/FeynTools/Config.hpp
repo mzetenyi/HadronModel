@@ -101,6 +101,11 @@ public:
     }
   }
 
+  template <typename T>
+  static void add(const std::string& key, const T& val) {
+    getParams().add(key,val);
+  }
+
   static const Params& getGroup(const std::string& key);
 
   static bool groupExists(const std::string&);
@@ -115,5 +120,16 @@ private:
 
 bool isSet(const std::string&);
 
+template <typename T>
+T getParam(const std::string& key, T defaultVal) {
+  if (isSet(key)) return Config::get<T>(key);
+  Config::add(key,defaultVal);
+  return defaultVal;
+}
+
+template <typename T>
+T getParam(const std::string& key) {
+  return Config::get<T>(key);
+}
 #endif // CONFIG_HPP
 
