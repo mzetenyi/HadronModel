@@ -33,4 +33,9 @@
 
 build
 
+.directory
+
+*.log
+*.eps
+
 exec/pi-N/results

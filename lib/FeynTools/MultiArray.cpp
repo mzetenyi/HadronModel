@@ -73,7 +73,7 @@ const idx& idx_null(idx::idx_null);
 const idx& idx_0(idx::idx_0);
 const idx& idx_lor(idx::idx_lor);
 const idx& idx_s1(idx::idx_s1);
-const idx& idx_s10(idx::idx_s10);
+const idx& idx_s1_0(idx::idx_s10);
 const idx& idx_s1h(idx::idx_s1h);
 const idx& idx_s3h(idx::idx_s3h);
 const idx& idx_s5h(idx::idx_s5h);

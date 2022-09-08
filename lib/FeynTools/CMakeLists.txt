@@ -7,6 +7,10 @@ set(SOURCES
     HelicityAmplitudes.hpp
     Histogram.cpp
     Histogram.hpp
+    Isospin.cpp
+    Isospin.hpp
+    Kinema.cpp
+    Kinema.hpp
     MultiArray.cpp
     MultiArray.hpp
     RandomNumberGenerator.cpp

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cassert>
 #include <cstdlib>
+#include "utils.hpp"
 
 using namespace std;
 using namespace Vectors;
@@ -1070,6 +1071,16 @@ namespace Spinors {
       }
     }
     return g;
+  }
+
+  bool isNaN(const DiracMatrix& g) {
+    for (int i(0); i<4; i++) {
+      for (int j(0); j<4; j++) {
+        if (isnan(real(g.x[i][j]))) return true;
+        if (isnan(imag(g.x[i][j]))) return true;
+      }
+    }
+    return false;
   }
 
   const DiracMatrix gamma0_(tau_unit, tau_null, tau_null, -tau_unit);

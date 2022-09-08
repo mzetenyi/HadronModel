@@ -437,6 +437,7 @@ namespace Spinors {
     /// Trace.
     dcomplex trace() const;
     friend dcomplex trace(const DiracMatrix&);
+    friend bool isNaN(const DiracMatrix&);
     friend class DiracSpinor;
     friend class AdDiracSpinor;
   private:

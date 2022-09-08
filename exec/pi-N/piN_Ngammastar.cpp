@@ -191,7 +191,7 @@ double piN_Ngammastar::cutoff_sch(const std::string& res) const {
       //      double qrho2(pout_abs*pout_abs);
       //      return cutoffRapp(spin,qpi2) * cutoffRapp(spin,qrho2);
       return cutoffRapp(spin,qpi2);
-    } else {
+    } else if (Config::get<string>("cutoff")=="ZM")  {
       double mr2(mr*mr);
       double delta2;
       double Gamma_r = Gr*BNpi;
@@ -205,6 +205,8 @@ double piN_Ngammastar::cutoff_sch(const std::string& res) const {
       double q2(pin_abs*pin_abs);
       double q02 = lambda(mr2,mn2,mpi2)/(4.*mr2);
       return pow((q02+delta2)/(q2+delta2), (l+1.)/2.) * sqrt(mr/srt);
+    } else {
+      return 1;
     }
   }
   return 1.;
@@ -468,6 +470,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
             const double g3 = Config::get<double>(res+".g3");
             const int l = Config::get<int>(res+".l");
             const dcomplex BWs = BW(s,mr,Gamma_R(res,s,mr,Gr,l));
+            //cerr << "BWs = " << BWs << endl;
             const dcomplex BWu = BW(uu,mr,0);
             double iso_s(0);
             double iso_u(0);
@@ -505,6 +508,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
             //------------  spin-1/2  ------------------------------
             if (spin == half) {
               if (gamma) {
+                PR(mr); PR(gA); PR(g0);
                 Mhad(NIch(res),NIem("gamma"),la1,la2,mu) += 
                   fac *
                   ubar(0,la2) *

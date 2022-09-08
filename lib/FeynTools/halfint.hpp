@@ -32,9 +32,9 @@ public:
   const halfint& operator+=(const halfint&);
   const halfint& operator-=(const halfint&);
   const halfint& operator*=(int);
-  const double operator*(double);
+  //const double operator*(double);
   const double operator/(double);
-  const dcomplex operator*(dcomplex);
+  //const dcomplex operator*(dcomplex);
   const dcomplex operator/(dcomplex);
   friend const halfint operator+(const halfint&, const halfint&);
   friend const halfint operator+(const halfint&, int);
@@ -54,8 +54,12 @@ public:
   friend const double operator/(const halfint&, const halfint&);
   friend const halfint operator*(int, const halfint&);
   friend const halfint operator*(const halfint&, int);
+  friend const halfint operator*(uint, const halfint&);
+  friend const halfint operator*(const halfint&, uint);
   friend const double operator*(double, const halfint&);
+  friend const double operator*(const halfint&, double);
   friend const dcomplex operator*(dcomplex, const halfint&);
+  friend const dcomplex operator*(const halfint&, dcomplex);
   friend const bool operator==(const halfint&, const halfint&);
   friend const bool operator!=(const halfint&, const halfint&);
   friend const bool operator<=(const halfint&, const halfint&);

@@ -1,8 +1,12 @@
 set(SOURCES 
+    FormFactors.cpp
+    FormFactors.hpp
     Gamma.cpp 
     Gamma.hpp 
     Vrancx.cpp 
-    Vrancx.hpp)
+    Vrancx.hpp
+    oldModel.hpp
+    oldModel.cpp)
 
 add_compile_options(-O3)
 add_library(ELModel ${SOURCES})

@@ -165,6 +165,7 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OB
   }
   
   for (double costh(startcosth+dcosth/2.); costh<maxcosth; costh+=dcosth) {
+    cerr << "costh = " << costh << endl;
     HelicityAmplitudes HA = helicityAmplitudes(costh);
     for (auto R : channels) {
       for (auto al : EMchannels) {
@@ -174,6 +175,9 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OB
           for (auto alp : EMchannels) {
             for (halfint la : {-_1,_0,_1}) {
               for (halfint lap : {-_1,_0,_1}) {
+                //cerr << "la, lap: " << la << "  " << lap << endl;
+//            for (halfint la : {-_1,_1}) {
+//              for (halfint lap : {-_1,_1}) {
                 dcomplex rho_la_lap(0);
                 for (halfint la1 : {-half,half}) {
                   for (halfint la2 : {-half,half}) {
@@ -181,13 +185,17 @@ MultiArray<double> piN_Ngammastar::partialExpectationValues(const Observable& OB
                       + HA({Rp,alp},{la1,la2,la}) * conj(HA({R,al},{la1,la2,lap}));
                   }
                 }
+                if (Config::exists("constAmpl")) {
+                  rho_la_lap = (la==lap) ? 1 : 0;
+                }
                 O_Ral += 1./2. * rho_la_lap * OBS(lap,la);
-                //      O_Ral_test += 1./2. * rho_la_lap * OBS(lap,la);
-                //cerr << "O_Ral/O_Ral_test = " << O_Ral/O_Ral_test << endl;
+                //dcomplex O_Ral_test = 1./2. * rho_la_lap * OBS(lap,la);
+                //cerr << "O_Ral_test = " << O_Ral_test << endl;
               }
             }
           }
         }
+        cerr << "O_Ral = " << O_Ral << endl;
         PartExpVal(NIch(R),NIem(al)) += dcosth * real(O_Ral);
       }
     }
@@ -233,18 +241,20 @@ udouble piN_Ngammastar::expectationValue(double costh, const Observable& OBS) co
 template <class Observable>
 udouble piN_Ngammastar::inverseExpectationValue(double costh, const Observable& OBS) const {
   int npol = 4; // No. of pol. states in gamma+N (real photons, no longi pol!)
-  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of piN->Ngamma*
+  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of gammaN->Npi
+
   return fac*bareExpectationValue(costh,OBS);
 }
   
 template <class Observable>
 udouble piN_Ngammastar::bareExpectationValue(const Observable& OBS) const {
+  cerr << "In: bareExpectationValue" << endl;
   MultiArray<double> PartExpVal = partialExpectationValues(OBS);
-  // for (auto R : channels) {
-  //   for (auto al : EMchannels) {
-  //     cerr << R << al << " -> " << PartExpVal(NIch(R),NIem(al)) << endl;
-  //   }
-  // }
+  for (auto R : channels) {
+    for (auto al : EMchannels) {
+      cerr << R << "  " << al << " -> " << PartExpVal(NIch(R),NIem(al)) << endl;
+    }
+  }
   double expVal(0);
   double r2(0);
   for (auto R : channels) {
@@ -274,8 +284,13 @@ udouble piN_Ngammastar::expectationValue(const Observable& OBS) const {
 
 template <class Observable>
 udouble piN_Ngammastar::inverseExpectationValue(const Observable& OBS) const {
+  cerr << "In: inverseExpectationValue" << endl;
   int npol = 4; // No. of pol. states in gamma+N (real photons, no longi pol!)
-  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of piN->Ngamma*
+  double fac = 1./(32.*pi_*s) * pin_abs/pout_abs * 1./npol; // factor for cross section of gammaN->Npi
+  cerr << "s = " << s << endl;
+  cerr << "pin_abs = " << pin_abs << endl;
+  cerr << "pout_abs = " << pout_abs << endl;
+  cerr << "kine fac = " << fac << endl;
   return fac*bareExpectationValue(OBS);
 }
 

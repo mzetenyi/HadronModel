@@ -1,0 +1,479 @@
+// Nrho branching ratios of resonances are from Nikonov's 2017 Trento presentation
+// rho width parametrization is Manley with R=0.8 fm, like in Bonn-Gatchina PWA
+// newsigns: opposite sign for baryon-rho meson couplings (NNrho, RNrho)
+//          - corresponds to change of sign of Lagrangians
+// the coupling constants 'gngamma_old', 'gpgamma_old', and 'g0_old' belong to the
+// Lagrangian model of the 2012 paper. The values are taken from the old paper.
+rhospec=0
+
+gsipipi = 4.01631
+grho_tilde = -5.96
+grho = 4.96
+
+g_NNpi = 13.4; // Dmitriev etal NPA 459 (1986) 503
+f_NNpi = 0.97; // Bergervoet et al. PRC 41 ('90) 1435
+//const double ka_NNrho(6.033); // taken from Engel et al. NPA 603 (1996) 387.
+                                // similar value (6.1) is given in Machleidt, Adv.Nucl.Phys. Vol.19
+                                //         (without explanation)
+                                //                would be better to use the data from Feuster, Mosel PRC 58 (1998) 457,
+                                // where 1.99 < ka_NNrho < 2.65 values are listed, and 2.07 < g_NNrho < 3.38
+                                //         (we have g_NNrho = 2.98)
+ka_NNrho = 2.3;
+//ka_NNrho = 0;
+
+// nucleon anomalous magnetic moment (Kaptari, Kampfer, NPA764 338 (2007)):
+// const double ka_ppgamma(1.793); // misprint; in PDG: ka_ppgamma = 2.793
+ka_ppgamma = 1.793;
+ka_nngamma = -1.913;
+
+pi_0 {
+  spin = 0
+  isospin = 1
+  mass = 0.13498
+}
+
+pi_pm {
+  spin = 0
+  isospin = 1
+  mass = 0.13957
+}
+
+electron {
+  mass = 0.000511
+}
+
+rho {
+  spin = 1
+  isospin = 1
+  mass = 0.77526
+  width = 0.1491
+}
+
+sigma {
+  spin = 0
+  isospin = 0
+  mass = 0.475
+  width = 0.55
+}
+
+Nucleon {
+  spin = 1/2
+  isospin = 1/2
+  mass = 0.9389
+}
+
+proton {
+  spin = 1/2
+  isospin = 1/2
+  mass = 0.938272
+}
+
+neutron {
+  spin = 1/2
+  isospin = 1/2
+  mass = 0.939565
+}
+
+D1232 {
+  spin = 3/2
+  parity = 1
+  isospin = 3/2
+  l = 1
+  mass = 1.232
+  width = 0.117
+  Bngamma = 0.006
+  Bpgamma = 0.006
+  BNpi = 0.994
+  BDpi = 0
+  BNrho = 0
+  BNsi = 0
+  gngamma = -1.2784
+  gpgamma = -1.2784
+  gngamma_old = -1.5
+  gpgamma_old = -1.5
+  u_gngamma = 0.0416667
+  gVMD2 = 20.9392
+  g0 = 0.24683
+  g0_old = 1.52
+  u_g0 = 0
+  g1 = 0
+  u_g1 = 0
+  g2 = 0
+  g3 = 0
+  gsi = 0
+  gDpi = 0
+}
+
+N1440 {
+  spin = 1/2
+  parity = 1
+  isospin = 1/2
+  l = 1
+  mass = 1.44
+  width = 0.35
+  Bngamma = 0.0003
+  Bpgamma = 0.000415
+  BNpi = 0.65
+  BDpi = 0.165
+  BNrho = 0.001  // half of upper limit 
+  BNsi = 0.17
+  gngamma = 0.0528755
+  gpgamma = 0.0621897
+  gngamma_old = -0.088
+  gpgamma_old = 0.204
+  u_gngamma = 0.166667
+  gVMD2 = 0.866062
+  g0 = 0.384704
+  g0_old = 7.4
+  u_g0 = 0.0769231
+  g1 = -1.59466
+  u_g1 = 0.5
+  g2 = 0.
+  g3 = 0.
+  gsi = 3.39646
+  gDpi = 0.329141
+}
+
+N1520 {
+  spin = 3/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.515
+  width = 0.11
+  Bngamma = 0.00415
+  Bpgamma = 0.00415
+  BNpi = 0.6
+  BDpi = 0.28
+  BNrho = 0.122
+  BNsi = 0.01
+  gngamma = 0.355091
+  gpgamma = 0.355091
+  gngamma_old = 0.654
+  gpgamma_old = -0.67
+  u_gngamma = 0.138554
+  gVMD2 = 5.85106
+  g0 = 0.147741
+  g0_old = 1.94
+  u_g0 = 0.0416667
+  g1 = -8.1274
+  u_g1 = 0.0778689
+  g2 = 0.
+  g3 = 0.
+  gsi = 0.307674
+  gDpi = 0.0085632
+}
+
+N1535 {
+  spin = 1/2
+  parity = -1
+  isospin = 1/2
+  l = 0
+  mass = 1.53
+  width = 0.15
+  Bngamma = 0.0013
+  Bpgamma = 0.00225
+  BNpi = 0.42
+  BNeta = 0.425
+  BDpi = 0.025
+  BNrho = 0.032
+  BNsi = 0.06
+  gngamma = 0.0582606
+  gpgamma = 0.0766469
+  gngamma_old = 0.033
+  gpgamma_old = 0.204
+  u_gngamma = 0.461538
+  gVMD2 = 0.954265
+  g0 = 0.15653
+  g0_old = 0.838
+  u_g0 = 0.119048
+  g1 = -1.18577
+  u_g1 = 0.109375
+  g2 = 0.
+  g3 = 0.
+  gsi = 6.13447
+  gDpi = 0.0156628
+}
+
+N1650 {
+  spin = 1/2
+  parity = -1
+  isospin = 1/2
+  l = 0
+  mass = 1.65
+  width = 0.125
+  Bngamma = 0.00085
+  Bpgamma = 0.0012
+  BNpi = 0.6
+  BNeta = 0.25
+  BDpi = 0.12
+  BNrho = 0.07
+  BNsi = 0.1
+  gngamma = 0.0339929
+  gpgamma = 0.0403896
+  gngamma_old = -0.181
+  gpgamma_old = -0.186
+  u_gngamma = 0
+  gVMD2 = 0.556779
+  g0 = 0.134359
+  g0_old = 1.09
+  u_g0 = 0
+  g1 = -0.599393
+  u_g1 = 0
+  g2 = 0.
+  g3 = 0.
+  gsi = 4.6806
+  gDpi = 0.0133048
+}
+
+N1675 {
+  spin = 5/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.675
+  width = 0.145
+  Bngamma = 0.00075
+  Bpgamma = 0.0001
+  BNpi = 0.4
+  BDpi = 0.3
+  BNrho = 0.005 // half of upper limit 
+  BNsi = 0.05
+  gngamma = 0.548374
+  gpgamma = 0.200238
+  gngamma_old = -0.679
+  gpgamma_old = 0.124
+  u_gngamma = 0.5
+  gVMD2 = 8.98196
+  g0 = 0.000696245
+  g0_old = 0.122
+  u_g0 = 0.025
+  g1 = -8.6389
+  u_g1 = 0.5
+  g2 = 0.
+  g3 = 0.
+  gsi = 0.781508
+  gDpi = 0.
+}
+
+N1680 {
+  spin = 5/2
+  parity = 1
+  isospin = 1/2
+  l = 3
+  mass = 1.685
+  width = 0.12
+  Bngamma = 0.000335
+  Bpgamma = 0.00265
+  BNpi = 0.65
+  BDpi = 0.17
+  BNrho = 0.12
+  BNsi = 0.14
+  gngamma = 0.320495
+  gpgamma = 0.901408
+  gngamma_old = -0.381
+  gpgamma_old = -0.38
+  u_gngamma = 0.186567
+  gVMD2 = 5.24946
+  g0 = 0.00277481
+  g0_old = 0.509
+  u_g0 = 0.0384615
+  g1 = -17.0845
+  u_g1 = 0.0833333
+  g2 = 0.
+  g3 = 0.
+  gsi = 0.262731
+  gDpi = 0.
+}
+
+N1700 {
+  spin = 3/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.72
+  width = 0.2
+  Bngamma = 0.0007
+  Bpgamma = 0.0003
+  BNpi = 0.12
+  BDpi = 0.7
+  BNrho = 0.45
+  BNsi = 0.08
+  gngamma = 0.119195
+  gpgamma = 0.0780312
+  gngamma_old = -0.060
+  gpgamma_old = -0.135
+  u_gngamma = 0
+  gVMD2 = 1.95232
+  g0 = 0.0430866
+  g0_old = 0.434
+  u_g0 = 0
+  g1 = -3.49859
+  u_g1 = 0
+  g2 = 0.
+  g3 = 0.
+  gsi = 0.
+  gDpi = 0.
+}
+
+N1710 {
+  spin = 1/2
+  parity = 1
+  isospin = 1/2
+  l = 1
+  mass = 1.71
+  width = 0.14
+  Bngamma = 0.0001
+  Bpgamma = 0.00041
+  BNpi = 0.125
+  BDpi = 0.06
+  BNrho = 0.09
+  BNsi = 0.
+  gngamma = 0.0111394
+  gpgamma = 0.0225555
+  gngamma_old = 0.044
+  gpgamma_old = 0.0694
+  u_gngamma = 0
+  gVMD2 = 0.182455
+  g0 = 0.0593973
+  g0_old = 1.28
+  u_g0 = 0
+  g1 = -0.991888
+  u_g1 = 0
+  g2 = 0.
+  g3 = 0.
+  gsi = 0.
+  gDpi = 0.0139505
+}
+
+D1600 {
+  spin = 3/2
+  parity = 1
+  isospin = 3/2
+  l = 1
+  mass = 1.57
+  width = 0.25
+  Bngamma = 0.00018
+  Bpgamma = 0.00018
+  BNpi = 0.16
+  BDpi = 0.55
+  BNrho = 0.05
+  BNsi = 0
+  gngamma = 0.0961241
+  gpgamma = 0.0961241
+  gngamma_old = 0.189
+  gpgamma_old = 0.189
+  u_gngamma = 0
+  gVMD2 = 1.57444
+  g0 = 0.0392509
+  g0_old = 0.355
+  u_g0 = 0
+  g1 = -18.9721
+  u_g1 = 0
+  g2 = 0.
+  g3 = 0.
+  gsi = 0
+  gDpi = 0.0125799
+}
+
+D1620 {
+  spin = 1/2
+  parity = -1
+  isospin = 3/2
+  l = 0
+  mass = 1.61
+  width = 0.13
+  Bngamma = 0.00065
+  Bpgamma = 0.00065
+  BNpi = 0.3
+  BDpi = 0.45
+  BNrho = 0.43
+  BNsi = 0
+  gngamma = 0.032623
+  gpgamma = 0.032623
+  gngamma_old = 0.0272
+  gpgamma_old = 0.0272
+  u_gngamma = 0
+  gVMD2 = 0.534341
+  g0 = 0.180828
+  g0_old = 0.587
+  u_g0 = 0
+  g1 = -3.64876
+  u_g1 = 0
+  g2 = 0.
+  g3 = 0.
+  gsi = 0
+  gDpi = 0.0341939
+}
+
+R1hp {
+  spin = 1/2
+  parity = 1
+  isospin = 1/2
+  l = 1
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.352031
+}
+
+R1hm {
+  spin = 1/2
+  parity = -1
+  isospin = 1/2
+  l = 0
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.336116
+}
+
+R3hp {
+  spin = 3/2
+  parity = 1
+  isospin = 1/2
+  l = 1
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.05164
+}
+
+R3hm {
+  spin = 3/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.274343
+}
+
+R5hp {
+  spin = 5/2
+  parity = 1
+  isospin = 1/2
+  l = 3
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.05164
+}
+
+R5hm {
+  spin = 5/2
+  parity = -1
+  isospin = 1/2
+  l = 2
+  mass = 1.4
+  width = 0.2
+  gngamma = 1
+  gpgamma = 1
+  g0 = 0.274343
+}

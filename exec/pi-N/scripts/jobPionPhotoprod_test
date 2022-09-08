@@ -1,0 +1,14 @@
+#!/bin/bash
+
+projectHome="/home/zetenyi/work/HadronModel"
+cd $projectHome/_build/exec/pi-N/
+results=$projectHome/exec/pi-N/results/
+
+mkdir -p $results
+mkdir -p $results/pionPhotoprod/
+mkdir -p $results/pionPhotoprod/test/
+
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch noRNpiFF > $results/pionPhotoprod/test/pionPhotoprod_D1232sch_noFF
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch noRNpiFF oldModel > $results/pionPhotoprod/test/pionPhotoprod_D1232sch_noFF_old
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch > $results/pionPhotoprod/test/pionPhotoprod_D1232sch
+./pionPhotoprodTest load[../../../lib/ELModel/model_params] dsrt=0.01 D1232 sch oldModel > $results/pionPhotoprod/test/pionPhotoprod_D1232sch_old
