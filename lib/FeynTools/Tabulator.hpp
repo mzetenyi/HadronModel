@@ -5,6 +5,19 @@
 #include <iostream>
 #include <vector>
 
+/**
+ * @brief Print tabulated output with predefined field widths.
+ * 
+ * Example usage: 
+ * 
+ *     Tabulator tab(5,12);
+ *     tab.printComment("sqrt(s)","sigtot");
+ *     tab.printComment("[GeV]","[mb]");
+ *     for (double srt(srtmin); srt < srtmax; srt += dsrt) {
+ *        tab.printLine(GeV(srt),mb(sigtot));
+ *     } 
+ * 
+ */
 class Tabulator {
  public:
   template <typename... Args>
