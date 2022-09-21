@@ -1,6 +1,5 @@
 #include "FormFactors.hpp"
-#include "Config.hpp"
-#include "Kinema.hpp"
+#include "FeynTools.hpp"
 
 using namespace std;
 
