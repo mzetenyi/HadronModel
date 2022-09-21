@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 #include <map>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -131,5 +132,21 @@ template <typename T>
 T getParam(const std::string& key) {
   return Config::get<T>(key);
 }
+
+/// @brief Obtain a range of values to be used in range based for loop.
+/// @param key a string used in Config to find min, max values and increment.
+/// @param min default min value for range
+/// @param max default max value for range
+/// @param inc default increment for range
+/// @return the generated range of values in a vector.
+/// 
+/// Searches for the strings "<key>min", "<key>max" and "d<key>" in Config parameters to obtain the 
+/// min, max and increment values that are used to generate the values in the range according to
+///    
+///    for (double val(min), val<max, val+=inc) {
+///         ret.push_back(val);
+///    }
+std::vector<double> getRange(const std::string& key, double min=0, double max=0, double inc=0);
+
 #endif // CONFIG_HPP
 
