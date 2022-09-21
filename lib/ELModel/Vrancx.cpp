@@ -4,7 +4,6 @@
 
 #include "Config.hpp"
 #include "utils.hpp"
-#include "oldModel.hpp"
 #include "Isospin.hpp"
 #include "FormFactors.hpp"
 
@@ -439,9 +438,6 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
   if (spin == half) {
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
   } else if (spin == 3 * half) {
-    if (isSet("oldModel")) {
-      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
-    }
     return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
   } else {
     cerr << "vertexRNpi: spin-parity " << spin << ((parity > 0) ? "+" : "-")
@@ -476,9 +472,6 @@ DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
   if (spin == half) {
     return isofac * FF * vertex1hNpi(g, spin * parity, q);
   } else if (spin == 3 * half) {
-    if (isSet("oldModel")) {
-      return isofac * FF * vertex3hNpi_old(g, spin * parity, muR1, pR, q);
-    }
     return isofac * FF * vertex3hNpi(g, spin * parity, muR1, pR, q);
   } else if (spin == 5 * half) {
     return isofac * FF * vertex5hNpi(g, spin * parity, muR1, muR2, pR, q);
@@ -506,9 +499,6 @@ DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
   if (spin == half) {
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
   } else if (spin == 3 * half) {
-    if (isSet("oldModel")) {
-      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
-    }
     return vertex3hNgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
   } else if (spin == 5 * half) {
     return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
@@ -536,9 +526,6 @@ DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR,
   if (spin == half) {
     return vertex1hNgamma(g, spin * parity, pR, mu, k);
   } else if (spin == 3 * half) {
-    if (isSet("oldModel")) {
-      return vertex3hNgamma_old(g, spin * parity, muR1, pR, mu, k);
-    }
     return vertexN3hgamma(g, 0, 0, spin * parity, muR1, pR, mu, k);
   } else if (spin == 5 * half) {
     return vertex5hNgamma(g, 0, 0, spin * parity, muR1, muR2, pR, mu, k);
