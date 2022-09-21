@@ -1,3 +1,6 @@
+#ifndef WAVWFUNC_HPP
+#define WAVWFUNC_HPP
+
 #include <cassert>
 #include <cstdlib>
 #include "utils.hpp"
@@ -257,3 +260,5 @@ private:
   static double _G(double m, int mu, int nu, FourVector p);
   static DiracMatrix _T(double m, int mu, int nu, FourVector p);
 };
+
+#endif // WAVWFUNC_HPP
