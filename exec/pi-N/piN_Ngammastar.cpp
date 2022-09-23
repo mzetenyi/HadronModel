@@ -55,8 +55,10 @@ vector<string> piN_Ngammastar::determineEMchannels() const {
   bool gamma = Config::exists("gamma");
   bool rho = (Config::exists("rho") or Config::exists("rho2"));
   if (not (gamma or rho)) gamma = rho = true;
-  if (gamma) EMchannels.push_back("gamma");
-  if (rho) EMchannels.push_back("rho");
+  bool Bgamma = Config::exists("Bgamma");
+  bool Brho = (Config::exists("Brho") or Config::exists("Brho2"));
+  if (gamma or Bgamma) EMchannels.push_back("gamma");
+  if (rho or Brho) EMchannels.push_back("rho");
   //  cerr << "return from vector<string> piN_Ngammastar::determineEMchannels() const" << endl;
   return EMchannels;
 }
@@ -106,6 +108,9 @@ piN_Ngammastar::piN_Ngammastar(double srt, double M) :
   NIem(EMchannels),
   NIdec(DECchannels),
   relative_errors(getRelative_errors()),
+  Bgamma(Config::exists("Bgamma")),
+  Brho(Config::exists("Brho")),
+  Brho2(Config::exists("Brho2")),
   gamma(Config::exists("gamma")),
   rho(Config::exists("rho")),
   rho2(Config::exists("rho2")),
@@ -126,8 +131,14 @@ piN_Ngammastar::piN_Ngammastar(double srt, double M) :
   Born_corr(Config::exists("Born_corr")) {
   //  cerr << "in piN_Ngammastar constructor" << endl;
   if (not(gamma or rho or rho2)) gamma = rho = true;
+  if (rho2) gamma = rho = false;
+  if (Brho2) Bgamma = Brho = false;
+  if (not(Bgamma or Brho or Brho2)) {
+    Bgamma = gamma;
+    Brho = rho;
+    Brho2 = rho2;
+  }
   if (not(sch or uch)) sch = uch = true;
-  if (rho and rho2) rho=false;
   s = srt*srt;
   M2 = M*M;
   mpi_pm = Config::get<double>("pi_pm.mass");
@@ -316,7 +327,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     Agamma[i] = Arho[i] = 0.;
   }
 
-  if (gamma) {
+  if (Bgamma) {
     if (vGamma) {
       Agamma[1] += 2.*mn*F2/(uu-mn2);
       Agamma[2] += - 4.*mn*Ftilde/(uu-mn2)/(tt-mpi2);
@@ -337,7 +348,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     }
   }
 
-  if (rho) {
+  if (Brho) {
     if (vRho) {
       Arho[1] += mn*(F2/(uu-mn2)-F1/(s-mn2)) * F_rho;
       Arho[2] += - 2.*mn*Ftilde/(uu-mn2)/(tt-mpi2) * F_rho;
@@ -351,7 +362,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
     }
   }
 
-  if (rho2) {
+  if (Brho2) {
     if (vRho) {
       Arho[1] += mn*(F2/(uu-mn2)-F1/(s-mn2)) * (mrho*mrho/M2)*F_rho;
       Arho[2] += - 2.*mn*Ftilde/(uu-mn2)/(tt-mpi2) * (mrho*mrho/M2)*F_rho;
@@ -387,51 +398,51 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
         //------------  Born terms  ------------------------------
         if (Born) {
           for (int j(1); j<=5; j++) {
-            if (gamma)       Mhad(NIch("Born"),NIem("gamma"),la1,la2,mu) += ubar(0,la2) * Agamma[j] * M_(_1*j,mu) * u(0,la1);
-            if (rho or rho2) Mhad(NIch("Born"),NIem("rho"),la1,la2,mu)   += ubar(0,la2) *   Arho[j] * M_(_1*j,mu) * u(0,la1);
+            if (Bgamma)        Mhad(NIch("Born"),NIem("gamma"),la1,la2,mu) += ubar(0,la2) * Agamma[j] * M_(_1*j,mu) * u(0,la1);
+            if (Brho or Brho2) Mhad(NIch("Born"),NIem("rho"),la1,la2,mu)   += ubar(0,la2) *   Arho[j] * M_(_1*j,mu) * u(0,la1);
           }
         }
         //------------  Born terms separately --------------------
         if (Born_s) { // s-channel
-          if (gamma) {
+          if (Bgamma) {
             Mhad(NIch("Born_s"),NIem("gamma"),la1,la2,mu) += F1 * ubar(0,la2) * vertexNNgamma(mu, 0, -k) *
               fprop(p2+k,mn) * vertexNNpi(q,1,-1) * u(0,la1);
           }
-          if (rho) {
+          if (Brho) {
             Mhad(NIch("Born_s"),NIem("rho"),la1,la2,mu) += F1 * ubar(0,la2) * vertexNNrho(mu, -k,0,0) *
               fprop(p2+k,mn) * vertexNNpi(q,1,-1) * u(0,la1) * (-e/grho_tilde)*F_rho;
           }
         }
         if (Born_u) { // u-channel
-          if (gamma) {
+          if (Bgamma) {
             Mhad(NIch("Born_u"),NIem("gamma"),la1,la2,mu) += F2 * ubar(0,la2) * vertexNNpi(q,1,-1) *
               fprop(p1-k,mn) * vertexNNgamma(mu, 1, -k) * u(0,la1);
           }
-          if (rho) {
+          if (Brho) {
             Mhad(NIch("Born_u"),NIem("rho"),la1,la2,mu) += F2 * ubar(0,la2) * vertexNNpi(q,1,-1) *
               fprop(p1-k,mn) * vertexNNrho(mu, -k,1,0) * u(0,la1) * (-e/grho_tilde)*F_rho;
           }
         }
         if (Born_t) { // t-channel
-          if (gamma) {
+          if (Bgamma) {
             Mhad(NIch("Born_t"),NIem("gamma"),la1,la2,mu) += F3 * ubar(0,la2) * vertexNNpi(-(k-q),1,-1) * u(0,la1) *
               sprop(k-q,mpi) * vertexgammapipi(mu, k-q, q);
           }
-          if (rho) {
+          if (Brho) {
             Mhad(NIch("Born_t"),NIem("rho"),la1,la2,mu) += F3 * ubar(0,la2) * vertexNNpi(-(k-q),1,-1) * u(0,la1) *
               sprop(k-q,mpi) * vertexrhopipi(mu, k-q, q) * (-e/grho_tilde)*F_rho;
           }
         }
         if (Born_c) { // contact term
-          if (gamma) {
+          if (Bgamma) {
             Mhad(NIch("Born_c"),NIem("gamma"),la1,la2,mu) += iso * ubar(0,la2) * vertexNNgammapi(mu) * u(0,la1);
           }
-          if (rho) {
+          if (Brho) {
             Mhad(NIch("Born_c"),NIem("rho"),la1,la2,mu) += ubar(0,la2) * vertexNNrhopi(mu,1,0,-1) * u(0,la1) * (-e/grho_tilde)*F_rho;
           }
         }
         if (Born_corr) { // correction term for gauge invariance
-          if (gamma) {
+          if (Bgamma) {
             Mhad(NIch("Born_corr"),NIem("gamma"),la1,la2,mu) += -e*f_NNpi*iso/mpi * ubar(0,la2) * 
               (
                - 2.*mn*gamma5_ * (
@@ -442,7 +453,7 @@ HelicityAmplitudes piN_Ngammastar::helicityAmplitudes(double costh) const {
                ) *
               u(0,la1);
           }
-          if (rho) {
+          if (Brho) {
             Mhad(NIch("Born_corr"),NIem("rho"),la1,la2,mu) += grho_tilde*f_NNpi/(sqrt(2.)*mpi) * 2.*mn * ubar(0,la2) * gamma5_ * 
               ((Ftilde-F2)*(2.*p1(mu)-k(mu))/(uu-mn2)
                - (Ftilde-F1)*(2.*p2(mu)+k(mu))/(s-mn2)
