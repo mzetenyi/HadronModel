@@ -5,6 +5,11 @@
 #include "Kinema.hpp"
 #include "utils.hpp"
 
+/**
+ * @brief 2 -> 2 cros section with two stable particles in the final state.
+ * 
+ * @tparam Amplitude 
+ */
 template <typename Amplitude>
 class CrossSectionSS {
  public:
@@ -14,7 +19,7 @@ class CrossSectionSS {
     Kinema2 kinOut = amplitude.getOutputKinematics();
     double srt = kinIn.M;
     return 1. / (32. * pi_ * srt * srt) * kinOut.pabs() / kinIn.pabs() *
-           amplitude.MSQR();
+           amplitude.MSQR(costh);
   }
   double sigmaTot() {
     int ncosth = getParam<int>("ncosth",20);
@@ -30,6 +35,11 @@ class CrossSectionSS {
   Amplitude amplitude;
 };
 
+/**
+ * @brief 2 -> 2 cross section with a stable particle and a resonance in the final state.
+ * 
+ * @tparam Amplitude 
+ */
 template <typename Amplitude>
 class CrossSectionSR {
  public:
