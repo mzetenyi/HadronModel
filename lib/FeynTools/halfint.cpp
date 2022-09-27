@@ -155,6 +155,9 @@ const bool operator>(const halfint& a, const halfint& b) {
 const int twice(const halfint& h) {
   return h._2x;
 }
+const int itrunc(const halfint& h) {
+  return h._2x/2;
+}
 halfint::operator double() const {
   return _2x/2.;
 }

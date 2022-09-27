@@ -63,6 +63,7 @@ public:
   friend const bool operator<(const halfint&, const halfint&);
   friend const bool operator>(const halfint&, const halfint&);
   friend const int twice(const halfint&);
+  friend const int itrunc(const halfint&);
   operator double() const;
   operator dcomplex() const;
   friend const halfint habs(const halfint&);
