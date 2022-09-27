@@ -3,6 +3,8 @@ set(SOURCES
     FormFactors.hpp
     Gamma.cpp
     Gamma.hpp
+    Resonance.cpp
+    Resonance.hpp
     Vrancx.cpp
     Vrancx.hpp)
 
