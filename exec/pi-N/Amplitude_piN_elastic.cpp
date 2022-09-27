@@ -4,8 +4,11 @@
 #include "Vectors.hpp"
 using namespace Vectors;
 #include "Gamma.hpp"
+#include "Resonance.hpp"
 #include "Vrancx.hpp"
 #include "wavefunc.hpp"
+
+using namespace std;
 
 Amplitude_piN_elastic::Amplitude_piN_elastic(double srt, int QN_in, int Qpi_in,
                                              int QN_out, int Qpi_out)
@@ -34,29 +37,40 @@ double Amplitude_piN_elastic::MSQR(double costh) {
   ubar_ ubarN_out(half, pN_out);
   u_ uN_in(half, pN_in);
   const double s = srt * srt;
-  const std::string res("D1232");
-  const double mr = getParam<double>(res + ".mass");
-  const double Gr = getParam<double>(res + ".width");
-  const int l = getParam<double>(res + ".l");
-  const dcomplex BWs = BW(s, mr, Gamma_R(res, s, mr, Gr, l));
-  double MSQR(0);
+  vector<string> resonances = getResonances();
+  double ret(0);
   for (halfint laN_in : {-half, half}) {
     for (halfint laN_out : {-half, half}) {
       dcomplex helAmp(0);
-      for (int mu_out : {0, 1, 2, 3}) {
-        for (int mu_in : {0, 1, 2, 3}) {
-          helAmp +=
-              ubarN_out(0, laN_out) *
-              vertexRNpi(res, ps, Qs, -pN_out, -QN_out, -ppi_out, -Qpi_out,
-                         mu_out) *
-              i_ * (gamma_(ps) + gamma_unit * mr) * BWs *
-              P3h(ps, mr, mu_out, mu_in) * sign_(mu_out) * sign_(mu_in) *
-              vertexRNpi(res, -ps, -Qs, pN_in, QN_in, ppi_in, Qpi_in, mu_in) *
-              uN_in(0, laN_in);
+      for (string res : resonances) {
+        const double mr = getParam<double>(res + ".mass");
+        const double Gr = getParam<double>(res + ".width");
+        const int l = getParam<double>(res + ".l");
+        const dcomplex BWs = BW(s, mr, Gamma_R(res, s, mr, Gr, l));
+        vector<int> range1 = getIndexRange(res, 1);
+        vector<int> range2 = getIndexRange(res, 2);
+        for (int mu1_out : range1) {
+          for (int mu2_out : range2) {
+            for (int mu1_in : range1) {
+              for (int mu2_in : range2) {
+                helAmp += ubarN_out(0, laN_out) *
+                          vertexRNpi(res, ps, Qs, -pN_out, -QN_out, -ppi_out,
+                                     -Qpi_out, mu1_out, mu2_out) *
+                          i_ *
+                          resonanceProjector(res, ps, mu1_out, mu2_out, mu1_in,
+                                             mu2_in) *
+                          BWs * sign_(mu1_out) * sign_(mu2_out) *
+                          sign_(mu1_in) * sign_(mu2_in) *
+                          vertexRNpi(res, -ps, -Qs, pN_in, QN_in, ppi_in,
+                                     Qpi_in, mu1_in, mu2_in) *
+                          uN_in(0, laN_in);
+              }
+            }
+          }
         }
-        MSQR += real(helAmp * conj(helAmp));
       }
+      ret += real(helAmp * conj(helAmp));
     }
   }
-  return MSQR;
+  return ret;
 }
