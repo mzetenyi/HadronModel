@@ -3,9 +3,9 @@
 #include <cassert>
 
 #include "Config.hpp"
-#include "utils.hpp"
-#include "Isospin.hpp"
 #include "FormFactors.hpp"
+#include "Isospin.hpp"
+#include "utils.hpp"
 
 // bool vectorTerm() {
 //   static bool vterm(Config::exists("vector") or
@@ -309,9 +309,8 @@ DiracMatrix vertex3hNrho(double g1, double g2, double g3, halfint spinParity,
          1. / (8. * mrho * mrho * mrho) * (g2 * ret2 + g3 * ret3);
 }
 
-DiracMatrix vertexN3hrho(double g1, double g2, double g3,
-                             halfint spinParity, uint muR, FourVector pR,
-                             uint nu, FourVector k) {
+DiracMatrix vertexN3hrho(double g1, double g2, double g3, halfint spinParity,
+                         uint muR, FourVector pR, uint nu, FourVector k) {
   const double mrho = Config::get<double>("rho.mass");
   FourVector pN(-pR - k);
   DiracMatrix ret1(gamma_null);
@@ -536,7 +535,6 @@ DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR,
   }
 }
 
-
 /**
    Projectors used in propagators. Terms proportional to the momentum are
    dropped, because the vertices give zero when contracted with the momentum.
@@ -567,6 +565,17 @@ DiracMatrix P5h(FourVector p, double m, uint mu, uint nu, uint la, uint ro) {
 */
 DiracMatrix pro1half(FourVector p, double m) {
   return gamma_(p) + m * gamma_unit;
+}
+
+DiracMatrix resonanceProjector(string resonance, FourVector p, uint mu1_out,
+                               uint mu2_out, uint mu1_in = 0, uint mu2_in = 0) {
+  double m = Config::get<double>(resonance + ".mass");
+  halfint spin = Config::get<halfint>(resonance + ".spin");
+  if (spin == half) return pro1half(p, m);
+  if (spin == 3 * half) return pro1half(p, m) * P3h(p, m, mu1_out, mu1_in);
+  if (spin == 5 * half)
+    return pro1half(p, m) * P5h(p, m, mu1_out, mu2_out, mu1_in, mu2_in);
+  exit(0);
 }
 
 /**

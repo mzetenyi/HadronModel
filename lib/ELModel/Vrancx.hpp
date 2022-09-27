@@ -53,48 +53,89 @@ DiracMatrix vertex1hNpi(double g, halfint spinParity, FourVector q);
 
 DiracMatrix vertex1hNsi(double g, halfint spinParity);
 
-DiracMatrix vertex1hNrho(double g1, halfint spinParity, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertex1hNrho(double g1, halfint spinParity, FourVector pR, uint nu,
+                         FourVector k);
 
-DiracMatrix vertex1hNgamma(double g1, halfint spinParity, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertex1hNgamma(double g1, halfint spinParity, FourVector pR,
+                           uint nu, FourVector k);
 
-DiracMatrix vertex3hNpi(double g, halfint spinParity, uint muR, FourVector pR, FourVector q);
+DiracMatrix vertex3hNpi(double g, halfint spinParity, uint muR, FourVector pR,
+                        FourVector q);
 
-DiracMatrix vertex3hNsi(double g, halfint spinParity, uint muR, FourVector pR, FourVector q);
+DiracMatrix vertex3hNsi(double g, halfint spinParity, uint muR, FourVector pR,
+                        FourVector q);
 
-DiracMatrix vertex3hNrho(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
-DiracMatrix vertexN3hrho(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertex3hNrho(double g1, double g2, double g3, halfint spinParity,
+                         uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertexN3hrho(double g1, double g2, double g3, halfint spinParity,
+                         uint muR, FourVector pR, uint nu, FourVector k);
 
-DiracMatrix vertex3hNgamma(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
-DiracMatrix vertexN3hgamma(double g1, double g2, double g3, halfint spinParity, uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertex3hNgamma(double g1, double g2, double g3, halfint spinParity,
+                           uint muR, FourVector pR, uint nu, FourVector k);
+DiracMatrix vertexN3hgamma(double g1, double g2, double g3, halfint spinParity,
+                           uint muR, FourVector pR, uint nu, FourVector k);
 
-DiracMatrix vertex5hNpi(double g, halfint spinParity, uint mu, uint nu, FourVector pR, FourVector q);
+DiracMatrix vertex5hNpi(double g, halfint spinParity, uint mu, uint nu,
+                        FourVector pR, FourVector q);
 
-DiracMatrix vertex5hNsi(double g, halfint spinParity, uint mu, uint nu, FourVector pR, FourVector q);
+DiracMatrix vertex5hNsi(double g, halfint spinParity, uint mu, uint nu,
+                        FourVector pR, FourVector q);
 
-DiracMatrix vertex5hNrho(double g1, double g2, double g3, halfint spinParity, uint si, uint ta, FourVector pR, uint la, FourVector k);
+DiracMatrix vertex5hNrho(double g1, double g2, double g3, halfint spinParity,
+                         uint si, uint ta, FourVector pR, uint la,
+                         FourVector k);
 
-DiracMatrix vertex5hNgamma(double g1, double g2, double g3, halfint spinParity, uint si, uint ta, FourVector pR, uint la, FourVector k);
+DiracMatrix vertex5hNgamma(double g1, double g2, double g3, halfint spinParity,
+                           uint si, uint ta, FourVector pR, uint la,
+                           FourVector k);
 
-DiracMatrix vertex3h3hpi(double g, 
-			 halfint spinParityR, uint muR, FourVector pR, 
-			 halfint spinParityD, uint muD, FourVector pD, 
-			 FourVector q);
+DiracMatrix vertex3h3hpi(double g, halfint spinParityR, uint muR, FourVector pR,
+                         halfint spinParityD, uint muD, FourVector pD,
+                         FourVector q);
 
-DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN, FourVector q, uint muR1=0, uint muR2=0);
+DiracMatrix vertexRNpi(string resonance, FourVector pR, FourVector pN,
+                       FourVector q, uint muR1 = 0, uint muR2 = 0);
 
-DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN, int QN, FourVector q, int Qpi, uint muR1=0, uint muR2=0);
+DiracMatrix vertexRNpi(string resonance, FourVector pR, int QR, FourVector pN,
+                       int QN, FourVector q, int Qpi, uint muR1 = 0,
+                       uint muR2 = 0);
 
-DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
+DiracMatrix vertexRNgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1 = 0,
+                          uint muR2 = 0);
 
-DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR, FourVector pN, FourVector k, uint mu, uint muR1=0, uint muR2=0);
+DiracMatrix vertexNRgamma(string resonance, FourVector pR, int QR,
+                          FourVector pN, FourVector k, uint mu, uint muR1 = 0,
+                          uint muR2 = 0);
 
-/** spin-3/2 propagator, without the terms that give 0 contrib. in the case of Vrancx Lagrangians. */
+/** spin-3/2 propagator, without the terms that give 0 contrib. in the case of
+ * Vrancx Lagrangians. */
 DiracMatrix P3h(FourVector p, double m, uint mu, uint nu);
 
-/** spin-5/2 propagator, without the terms that give 0 contrib. in the case of Vrancx Lagrangians. */
+/** spin-5/2 propagator, without the terms that give 0 contrib. in the case of
+ * Vrancx Lagrangians. */
 DiracMatrix P5h(FourVector p, double m, uint mu, uint nu, uint la, uint ro);
 
 DiracMatrix pro1half(FourVector p, double m);
+
+/**
+ * @brief projector used in resonance propagators
+ *
+ * Returns the projector that appears in the numerator of the resonance
+ * propagator. This formula is valid Vrancx lagrangians, terms proportianal to
+ * the fourmomentum are omitted.
+ *
+ * @param resonance name of baryon resonance in a string
+ * @param p fourmomentum of resonance
+ * @param mu1_out 1st Lorentz index of incoming fermion line
+ * @param mu2_out 1st Lorentz index of outgoing fermion line
+ * @param mu1_in 2nd Lorentz index of incoming fermion line
+ * @param mu2_in 2nd Lorentz index of outgoing fermion line
+ * @return DiracMatrix The numerator of the resonance propagator excluding a
+ * factor of i.
+ */
+DiracMatrix resonanceProjector(string resonance, FourVector p, uint mu1_out,
+                               uint mu2_out, uint mu1_in, uint mu2_in);
 
 DiracMatrix proN(FourVector p);
 
@@ -104,10 +145,11 @@ double _G(FourVector p, double m, uint mu, uint nu);
 
 DiracMatrix _T(FourVector p, double m, uint mu, uint nu);
 
-DiracMatrix pro5half(FourVector p, double m, uint mu1, uint mu2, uint nu1, uint nu2);
+DiracMatrix pro5half(FourVector p, double m, uint mu1, uint mu2, uint nu1,
+                     uint nu2);
 
 DiracMatrix fprop(FourVector p, double m);
 
 dcomplex sprop(FourVector p, double m);
 
-#endif // VRANCX_HPP
+#endif  // VRANCX_HPP
