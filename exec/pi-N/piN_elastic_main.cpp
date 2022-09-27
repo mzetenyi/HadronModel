@@ -7,7 +7,6 @@ int main(int argc, char** argv) {
     print_piN_elastic_sigtot();
   }
   if (isSet("dsig")) {
-    cerr << "calculating dsig" << endl;
     print_piN_elastic_dsig();
   }
   return 0;
