@@ -10,9 +10,13 @@ class Amplitude_piN_elastic {
   Kinema2 getInputKinematics();
   Kinema2 getOutputKinematics();
   double MSQR(double costh);
+  double MSQR_numeric(double costh);
+  double MSQR_analytic(double costh);
 
  private:
   Amplitude_piN_elastic();
+
+ protected:
   const double srt;
   const int QN_in;
   const int Qpi_in;

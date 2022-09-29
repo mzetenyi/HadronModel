@@ -3,6 +3,7 @@
 #include "Config.hpp"
 #include "Vectors.hpp"
 using namespace Vectors;
+#include "FormFactors.hpp"
 #include "Gamma.hpp"
 #include "Resonance.hpp"
 #include "Vrancx.hpp"
@@ -28,6 +29,11 @@ Kinema2 Amplitude_piN_elastic::getInputKinematics() { return kinIn; }
 Kinema2 Amplitude_piN_elastic::getOutputKinematics() { return kinOut; }
 
 double Amplitude_piN_elastic::MSQR(double costh) {
+  if (isSet("analytic")) return MSQR_analytic(costh);
+  return MSQR_numeric(costh);
+}
+
+double Amplitude_piN_elastic::MSQR_numeric(double costh) {
   FourVector pN_in = kinIn.p1();
   FourVector ppi_in = kinIn.p2();
   FourVector pN_out = kinOut.p1(costh);
@@ -72,5 +78,77 @@ double Amplitude_piN_elastic::MSQR(double costh) {
       ret += real(helAmp * conj(helAmp));
     }
   }
-  return ret;
+  int npol = 2;
+  return ret / npol;
+}
+
+double Amplitude_piN_elastic::MSQR_analytic(double costh) {
+  FourVector pN_in = kinIn.p1();
+  FourVector ppi_in = kinIn.p2();
+  FourVector pN_out = kinOut.p1(costh);
+  FourVector ppi_out = kinOut.p2(costh);
+  int Qs = QN_in + Qpi_in;
+  FourVector ps = pN_in + ppi_in;
+  ubar_ ubarN_out(half, pN_out);
+  u_ uN_in(half, pN_in);
+  const double s = srt * srt;
+  string res = "N1440";
+
+  const double mpi = getParam<double>("pi_pm.mass");
+  const double mR = getParam<double>(res + ".mass");
+  const double Gr = getParam<double>(res + ".width");
+  const int l = getParam<double>(res + ".l");
+  const dcomplex BWs = BW(s, mR, Gamma_R(res, s, mR, Gr, l));
+  const double BW2 = real(BWs * conj(BWs));
+  double g = Config::get<double>(res + ".g0");
+  double pNi_pNo = pN_in * pN_out;
+  double pNi_ppii = pN_in * ppi_in;
+  double pNo_ppii = pN_out * ppi_in;
+
+  double ret =
+
+      +pNi_pNo *
+          (-4. * POW<6>(mpi) + 4. * POW<2>(mR) * POW<4>(mpi) -
+           8. * mN * mR * POW<4>(mpi) - 12. * POW<2>(mN) * POW<4>(mpi) -
+           16. * POW<2>(mN) * POW<2>(mR) * POW<2>(mpi) -
+           32. * POW<3>(mN) * mR * POW<2>(mpi) -
+           16. * POW<4>(mN) * POW<2>(mpi) - 16. * pNi_ppii * POW<4>(mpi) +
+           16. * pNi_ppii * POW<2>(mR) * POW<2>(mpi) -
+           16. * pNi_ppii * POW<2>(mN) * POW<2>(mpi) -
+           16. * POW<2>(pNi_ppii) * POW<2>(mpi) +
+           16. * POW<2>(pNi_ppii) * POW<2>(mR) +
+           32. * POW<2>(pNi_ppii) * mN * mR +
+           16. * POW<2>(pNi_ppii) * POW<2>(mN))
+
+      + 4. * POW<2>(mN) * POW<6>(mpi) +
+      4. * POW<2>(mN) * POW<2>(mR) * POW<4>(mpi) +
+      24. * POW<3>(mN) * mR * POW<4>(mpi) + 20. * POW<4>(mN) * POW<4>(mpi) +
+      16. * POW<4>(mN) * POW<2>(mR) * POW<2>(mpi) +
+      32. * POW<5>(mN) * mR * POW<2>(mpi) + 16. * POW<6>(mN) * POW<2>(mpi) +
+      8. * pNi_ppii * pNo_ppii * POW<4>(mpi) -
+      8. * pNi_ppii * mN * mR * POW<4>(mpi) +
+      8. * pNi_ppii * POW<2>(mN) * POW<4>(mpi) +
+      32. * pNi_ppii * POW<3>(mN) * mR * POW<2>(mpi) +
+      32. * pNi_ppii * POW<4>(mN) * POW<2>(mpi) +
+      32. * POW<2>(pNi_ppii) * pNo_ppii * POW<2>(mpi) +
+      32. * POW<2>(pNi_ppii) * pNo_ppii * mN * mR +
+      32. * POW<2>(pNi_ppii) * pNo_ppii * POW<2>(mN) -
+      32. * POW<2>(pNi_ppii) * mN * mR * POW<2>(mpi) -
+      16. * POW<2>(pNi_ppii) * POW<2>(mN) * POW<2>(mpi) -
+      16. * POW<2>(pNi_ppii) * POW<2>(mN) * POW<2>(mR) -
+      32. * POW<2>(pNi_ppii) * POW<3>(mN) * mR -
+      16. * POW<2>(pNi_ppii) * POW<4>(mN) + 32. * POW<3>(pNi_ppii) * pNo_ppii -
+      32. * POW<3>(pNi_ppii) * mN * mR - 32. * POW<3>(pNi_ppii) * POW<2>(mN) -
+      8. * pNo_ppii * mN * mR * POW<4>(mpi) -
+      8. * pNo_ppii * POW<2>(mN) * POW<4>(mpi) -
+      16. * pNo_ppii * POW<2>(mN) * POW<2>(mR) * POW<2>(mpi) -
+      32. * pNo_ppii * POW<3>(mN) * mR * POW<2>(mpi) -
+      16. * pNo_ppii * POW<4>(mN) * POW<2>(mpi);
+
+  ret *= POW<4>(g / mpi);
+  double FF = formfactorRNpi(res, ps * ps);
+  double isofac_in = (Qpi_in == 0 ? 1. : sqrt(2.));
+  double isofac_out = (Qpi_out == 0 ? 1. : sqrt(2.));
+  int npol(2);
+  return ret * BW2 * POW<2>(FF * FF * isofac_in * isofac_out) / npol;
 }
