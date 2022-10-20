@@ -3,6 +3,7 @@
 
 #include "Config.hpp"
 #include "CrossSection.hpp"
+#include "DecayWidth.hpp"
 #include "halfint.hpp"
 #include "HelicityAmplitudes.hpp"
 #include "Histogram.hpp"
