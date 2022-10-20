@@ -19,3 +19,12 @@ vector<int> getIndexRange(string resonance, int i) {
   if (i <= itrunc(spin)) return {0, 1, 2, 3};
   return {0};
 }
+
+vector<halfint> getHelicityRange(string resonance) {
+  vector<halfint> result;
+  halfint spin = getParam<halfint>(resonance + ".spin");
+  for (halfint la(-spin); la <= spin; la++) {
+    result.push_back(la);
+  }
+  return result;
+}
