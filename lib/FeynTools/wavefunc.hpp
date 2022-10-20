@@ -185,6 +185,8 @@ public:
       @param s polarization (spin z coponent)
    */
   const DiracSpinor operator()(int mu, halfint s);
+
+  DiracSpinor operator()(halfint la, int mu1=0, int mu2=0);
 private:
   const halfint J;
   u_1h* u_1hp;
@@ -218,6 +220,7 @@ public:
       @param s polarization (spin z coponent)
    */
   const AdDiracSpinor operator()(int mu, halfint s);
+  AdDiracSpinor operator()(halfint la, int mu1=0, int mu2=0);
 private:
   const halfint J;
   ubar_1h* ubar_1hp;
