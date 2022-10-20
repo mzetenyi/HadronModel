@@ -10,6 +10,16 @@ target_compile_features(piN_elastic PRIVATE cxx_std_17)
 target_link_libraries(piN_elastic ELModel)
 target_link_libraries(piN_elastic FeynTools)
 
+add_executable(R_piN_decay Amplitude_R_piN.cpp R_piN_decay.cpp R_piN_decay_main.cpp Amplitude_R_piN.hpp 
+R_piN_decay.hpp)
+
+target_include_directories(R_piN_decay PUBLIC ../../lib/FeynTools ../../lib/ELModel)
+
+target_compile_features(R_piN_decay PRIVATE cxx_std_17)
+
+target_link_libraries(R_piN_decay ELModel)
+target_link_libraries(R_piN_decay FeynTools)
+
 add_executable(piN_Ndilep BornTerms.cpp cutoffs.cpp observables.cpp piN_Ndilep.cpp piN_Ndilep_main.cpp piN_Ngammastar.cpp
     BornTerms.hpp cutoffs.hpp observables.hpp piN_Ndilep.hpp piN_Ngammastar.hpp)
 
