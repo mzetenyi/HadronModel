@@ -18,7 +18,7 @@ class DecayWidthSS {
  public:
   DecayWidthSS(Amplitude amp) : amp(amp) {}
   double GammaTot() {
-    double p = amp.getKinematics().pabs();
+    double p = amp.getKinematics().getpabs();
     double M = amp.M;
     return 1. / (8. * pi_) * amp.MSQR() * p / (M * M);
   }

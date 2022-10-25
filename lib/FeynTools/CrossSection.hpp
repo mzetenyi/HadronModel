@@ -18,7 +18,7 @@ class CrossSectionSS {
     Kinema2 kinIn = amplitude.getInputKinematics();
     Kinema2 kinOut = amplitude.getOutputKinematics();
     double srt = kinIn.M;
-    return 1. / (32. * pi_ * srt * srt) * kinOut.pabs() / kinIn.pabs() *
+    return 1. / (32. * pi_ * srt * srt) * kinOut.getpabs() / kinIn.getpabs() *
            amplitude.MSQR(costh);
   }
   double sigmaTot() {
@@ -48,7 +48,7 @@ class CrossSectionSR {
     Kinema2 kinIn = amplitude.getInputKinematics();
     Kinema2 kinOut = amplitude.getOutputKinematics(m);
     double srt = kinIn.M;
-    return 1. / (32. * pi_ * srt * srt) * kinOut.pabs() / kinIn.pabs() *
+    return 1. / (32. * pi_ * srt * srt) * kinOut.getpabs() / kinIn.getpabs() *
            amplitude.MSQR(m, costh) * 2. * m * amplitude.spectralFunction(m);
   }
   double dsigma_dm(double m) {
