@@ -49,9 +49,9 @@ const double e(sqrt(4.*pi_*alpha));
 
 #define PR(x) std::cerr << #x << " = " << (x) << std::endl;
 #define PL(x) std::cerr << #x << " = " << (x) << " ";
-#define LOG(x) std::cout << "# " << std::setiosflags(std::ios::left) << setw(10) << #x  \
+#define LOG(x) std::cout << "# " << std::setiosflags(std::ios::left) << std::setw(10) << #x  \
   << " = " << std::setiosflags(std::ios::right) << (x) << std::endl;
-#define LOGC(x,comment) std::cout << "# " << std::setiosflags(std::ios::left) << setw(10) << #x  \
+#define LOGC(x,comment) std::cout << "# " << std::setiosflags(std::ios::left) << std::setw(10) << #x  \
   << " = " << std::setiosflags(std::ios::right) << (x) << "      // " << comment << std::endl;
 
 template <unsigned int n>
