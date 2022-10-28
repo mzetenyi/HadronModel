@@ -33,11 +33,11 @@ double Amplitude_NN_NDelta::spectralFunction(double m) {
 
 double Amplitude_NN_NDelta::MSQR(double m, double costh) {
   static const bool tch =
-      isSet("tch") or not(isSet("uch") and isSet("interference"));
+      isSet("tch") or not(isSet("uch") or isSet("interference"));
   static const bool uch =
-      isSet("uch") or not(isSet("tch") and isSet("interference"));
+      isSet("uch") or not(isSet("tch") or isSet("interference"));
   static const bool interference =
-      isSet("interference") or not(isSet("tch") and isSet("uch"));
+      isSet("interference") or not(isSet("tch") or isSet("uch"));
   double mpi = Config::get<double>("mpi");
   Kinema2 kinIn = getInputKinematics();
   Kinema2 kinOut = getOutputKinematics(m);
