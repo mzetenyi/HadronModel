@@ -401,6 +401,8 @@ class DiracMatrix {
   DiracMatrix(PauliMatrix, PauliMatrix, PauliMatrix, PauliMatrix);
   /// Destructor. Does nothing.
   ~DiracMatrix();
+  /// Access elements.
+  dcomplex operator()(int i, int j) const;
   /// Assignment operator.
   DiracMatrix& operator=(const DiracMatrix&);
   /// Adjoint

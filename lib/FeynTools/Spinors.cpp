@@ -963,6 +963,11 @@ DiracMatrix& DiracMatrix::operator=(const DiracMatrix& g) {
   }
   return *this;
 }
+
+dcomplex DiracMatrix::operator()(int i, int j) const {
+  return x[i][j];
+}
+
 /// Adjoint
 DiracMatrix DiracMatrix::adj() const {
   return gamma0_ * (*this).trans_conj() * gamma0_;
