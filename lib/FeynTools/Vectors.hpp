@@ -242,8 +242,12 @@ class FourVector {
   bool past() const;
   /// Decide if the FourVector is spacelike.
   bool spacelike() const;
+  /// Decide if FourVector is lightlike. Uses tolerance.
+  bool lightlike() const;
+  /// Decide if FourVector "is at rest", i.e. has no spacial component.
+  bool atRest() const;
   /// Decide if any component is NaN.
-  bool isNaN() const;
+  bool isnan() const;
   /// Null vector.
   static const FourVector nullVector;
   /// Basis vectors.
@@ -254,6 +258,8 @@ class FourVector {
  private:
   /// Variables to store the vector components.
   double x[4];
+  /// Tolerance to test lightlike or at rest.
+  static const double tolerance;
 };
 
 /**
@@ -328,6 +334,8 @@ class FourTensor {
   void output(std::ostream&, uint fieldWidth = 10) const;
   /// Trace.
   double trace() const;
+  /// check if any component is NaN
+  bool isnan() const;
   /// Null tensor.
   static const FourTensor nullTensor;
   /// Unit tensor.

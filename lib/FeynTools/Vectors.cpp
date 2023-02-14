@@ -549,15 +549,36 @@ FourVector reflect(const FourVector& v) {
   return FourVector(v.x[0], -v.x[1], -v.x[2], -v.x[3]);
 }
 
-bool FourVector::timelike() const { return (square() > 0); }
+bool FourVector::timelike() const {
+  if (lightlike()) {
+    return false;
+  }
+  return (square() > 0);
+}
 
-bool FourVector::future() const { return ((square() > 0) and x[0] > 0); }
+bool FourVector::future() const { return (timelike() and (x[0] > 0)); }
 
-bool FourVector::past() const { return ((square() > 0) and x[0] < 0); }
+bool FourVector::past() const { return (timelike() and (x[0] < 0)); }
 
-bool FourVector::spacelike() const { return (square() < 0); }
+bool FourVector::spacelike() const {
+  if (lightlike()) {
+    return false;
+  }
+  return (square() < 0);
+}
 
-bool FourVector::isNaN() const {
+bool FourVector::lightlike() const {
+  if (x[0] == 0) {
+    return spacial().square() == 0;
+  }
+  return fabs(square()) / (x[0] * x[0]) < tolerance;
+}
+
+bool FourVector::atRest() const {
+  return (x[0] != 0) and (spacial().square() / (x[0] * x[0]) < tolerance);
+}
+
+bool FourVector::isnan() const {
   return std::isnan(x[0]) or std::isnan(x[1]) or std::isnan(x[2]) or
          std::isnan(x[3]);
 }
@@ -567,6 +588,8 @@ const FourVector FourVector::nullVector(0., 0., 0., 0.);
 const FourVector FourVector::e[] = {
     FourVector(1, 0, 0, 0), FourVector(0, 1, 0, 0), FourVector(0, 0, 1, 0),
     FourVector(0, 0, 0, 1)};
+
+const double FourVector::tolerance = 0.000001;
 
 FourTensor::FourTensor() {
   for (uint i(0); i < 4; i++) {
@@ -848,6 +871,15 @@ void FourTensor::output(ostream& out, uint fieldWidth) const {
 
 double FourTensor::trace() const {
   return x[0][0] + x[1][1] + x[2][2] + x[3][3];
+}
+
+bool FourTensor::isnan() const {
+  return std::isnan(x[0][0]) or std::isnan(x[0][1]) or std::isnan(x[0][2]) or
+         std::isnan(x[0][3]) or std::isnan(x[1][0]) or std::isnan(x[1][1]) or
+         std::isnan(x[1][2]) or std::isnan(x[1][3]) or std::isnan(x[2][0]) or
+         std::isnan(x[2][1]) or std::isnan(x[2][2]) or std::isnan(x[2][3]) or
+         std::isnan(x[3][0]) or std::isnan(x[3][1]) or std::isnan(x[3][2]) or
+         std::isnan(x[3][3]);
 }
 
 const FourTensor FourTensor::nullTensor(0., 0., 0., 0.);
