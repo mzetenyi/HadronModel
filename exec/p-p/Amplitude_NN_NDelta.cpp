@@ -53,10 +53,6 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
   int Q4 = QD;
   int Qpi_t = Q1 - Q3;
   int Qpi_u = Q2 - Q3;
-  ubar_ ubarN(half, p3);
-  ubar_ ubarD(3 * half, p4);
-  u_ u1(half, p1);
-  u_ u2(half, p2);
   double MSQR(0);
   if (isSet("analytic")) {
     double mN = Config::get<double>("mN");
@@ -70,17 +66,17 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
     double t = ppi_t * ppi_t;
     double u = ppi_u * ppi_u;
     if (tch) {
-      MSQR += POW<4>(formFactor(t)) *
+      MSQR += -POW<4>(formFactor(t)) *
               POW<2>(f_DNpi * g_NNpi / (mpi * (t - mpi2))) * 2. / (3. * mD2) *
               (-t) * (t - POW<2>(mD - mN)) * POW<2>(t - POW<2>(mD + mN));
     }
     if (uch) {
-      MSQR += POW<4>(formFactor(u)) *
+      MSQR += -POW<4>(formFactor(u)) *
               POW<2>(f_DNpi * g_NNpi / (mpi * (u - mpi2))) * 2. / (3. * mD2) *
               (-u) * (u - POW<2>(mD - mN)) * POW<2>(u - POW<2>(mD + mN));
     }
     if (interference) {
-      MSQR += POW<2>(formFactor(t) * formFactor(u)) *
+      MSQR += -POW<2>(formFactor(t) * formFactor(u)) *
               POW<2>(f_DNpi * g_NNpi / mpi) * 1. / ((t - mpi2) * (u - mpi2)) *
               1. / (2. * mD2) *
               ((t * u + 2. * (mD2 - mN2) * (t + u) -
@@ -92,6 +88,10 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
                    (t * u - mN * (mD - mN) * (mD2 - mN2)));
     }
   } else {
+    ubar_ ubarN(half, p3);
+    ubar_ ubarD(3 * half, p4);
+    u_ u1(half, p1);
+    u_ u2(half, p2);
     for (halfint la1 : {-half, half}) {
       for (halfint la2 : {-half, half}) {
         for (halfint la3 : {-half, half}) {
@@ -107,6 +107,18 @@ double Amplitude_NN_NDelta::MSQR(double m, double costh) {
                           u2(0, la2) * scalarPropagator(ppi_u, mpi) *
                           sign_(mu) * ubarD(mu, la4) *
                           vertexDNpi(QD, ppi_u, Qpi_u, mu) * u1(0, la1);
+              if (isnan(helAmp_t)) {
+                PR(m);
+                PR(costh);
+                PR(ubarN(0, la3));
+                PR(vertexNNpi(QN, -ppi_t, -Qpi_t));
+                PR(u1(0, la1));
+                PR(scalarPropagator(ppi_t, mpi));
+                PR(ubarD(mu, la4));
+                PR(vertexDNpi(QD, ppi_t, Qpi_t, mu));
+                PR(u2(0, la2));
+                exit(0);
+              }
             }
             if (tch) {
               MSQR += real(helAmp_t * conj(helAmp_t));
