@@ -14,6 +14,7 @@
 #include "require.h"
 #include "Spinors.hpp"
 #include "Tabulator.hpp"
+#include "Transformations.hpp"
 #include "udouble.hpp"
 #include "units.hpp"
 #include "utils.hpp"
