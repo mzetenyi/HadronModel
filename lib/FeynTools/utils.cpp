@@ -20,3 +20,11 @@ dcomplex POW<0>(dcomplex x) {
 double lambda(double x, double y, double z) {
   return x*x + y*y + z*z - 2.*(x*y + y*z + z*x);
 }
+
+double myAcos(double x) {
+  return (x>1.) ? 0 : ((x<-1.) ? pi_ : acos(x));
+ }
+
+double myAcos(double x, double y) {
+  return (y==0.) ? 0 : myAcos(x/y);
+}

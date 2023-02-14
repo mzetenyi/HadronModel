@@ -77,5 +77,16 @@ int delta_(T i, T j) {
   return (i==j) ? 1 : 0;
 }
 
+double myAcos(double x);
+
+/**
+ * @brief Calculate the acos(x/y) in a safe way.
+ * 
+ * @param x 
+ * @param y 
+ * @return acos(x/y) or 0 if y=0
+ */
+double myAcos(double x, double y);
+
 
 #endif // UTILS_HPP
