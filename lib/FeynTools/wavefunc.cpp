@@ -3,6 +3,9 @@
 #include <cassert>
 #include <cstdlib>
 
+#include "Transformations.hpp"
+#include "halfint.hpp"
+
 using namespace std;
 
 eps_::eps_(FourVector p) : val(idx_lor, idx_s1) {
@@ -36,6 +39,7 @@ eps_::eps_(FourVector p) : val(idx_lor, idx_s1) {
     }
   } else {
     // massive particle:
+    /*
     double m = sqrt(m2);
     for (halfint lambda(-_1); lambda <= _1; lambda++) {
       dcomplex ep(0);
@@ -46,6 +50,43 @@ eps_::eps_(FourVector p) : val(idx_lor, idx_s1) {
       for (halfint i(_1); i <= _3; i++) {
         val(i, lambda) = e_(i, lambda) + ep * p(i) / (m * (p(0) + m));
       }
+    }
+    */
+    FourVector epsRestReP(0, 0, 0, 0);
+    FourVector epsRestImP(0, 0, 0, 0);
+    FourVector epsRestRe0(0, 0, 0, 0);
+    FourVector epsRestIm0(0, 0, 0, 0);
+    FourVector epsRestReM(0, 0, 0, 0);
+    FourVector epsRestImM(0, 0, 0, 0);
+    for (int i : {1, 2, 3}) {
+      epsRestReP(i) = real(e_(i, 1));
+      epsRestImP(i) = imag(e_(i, 1));
+      epsRestRe0(i) = real(e_(i, 0));
+      epsRestIm0(i) = imag(e_(i, 0));
+      epsRestReM(i) = real(e_(i, -1));
+      epsRestImM(i) = imag(e_(i, -1));
+    }
+    //PR(epsRestReP);
+    //PR(epsRestImP);
+    FourTensor L = TransformationFrom(p);
+    FourVector epsReP = L * epsRestReP;
+    FourVector epsImP = L * epsRestImP;
+    FourVector epsRe0 = L * epsRestRe0;
+    FourVector epsIm0 = L * epsRestIm0;
+    FourVector epsReM = L * epsRestReM;
+    FourVector epsImM = L * epsRestImM;
+    if (epsReP.isnan()) {
+      PR(p);
+      PR(sqrt(p*p));
+      PR(L);
+    }
+    //PR(epsReP);
+    //PR(epsImP);
+    //exit(0);
+    for (int i : {0, 1, 2, 3}) {
+      val(halfint(i), _1) = epsReP(i) + i_ * epsImP(i);
+      val(halfint(i), _0) = epsRe0(i) + i_ * epsIm0(i);
+      val(halfint(i), -_1) = epsReM(i) + i_ * epsImM(i);
     }
   }
 }
@@ -66,7 +107,7 @@ dcomplex eps_::operator()(uint mu, halfint lambda) {
    Polarization threevector. This is the polarization vector for a spin-1
    particle at rest.
    @param i index
-   @param lambda polarization (2*spin z coponent)
+   @param lambda polarization (spin z coponent)
 */
 dcomplex eps_::e_(int i, int lambda) {
   assert(isIndex3(i));
@@ -249,6 +290,13 @@ void u_3h::init(FourVector p) {
     val(mu, -half) = sqrt(2. / 3.) * e_(mu, _0) * u_(-half) +
                      1. / sqrt(3.) * e_(mu, -_1) * u_(half);
     val(mu, -3 * half) = e_(mu, -_1) * u_(-half);
+    if (val(mu, 3 * half).isnan()) {
+      PR(p);
+      PR(e_(mu, _1));
+      PR(u_(-half));
+      PR(u_(half));
+    }
+
   }
 }
 

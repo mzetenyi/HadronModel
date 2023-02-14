@@ -7,6 +7,7 @@
 #include "Vectors.hpp"
 #include "Spinors.hpp"
 #include "MultiArray.hpp"
+#include "halfint.hpp"
 
 using namespace Vectors;
 using namespace Spinors;
@@ -33,6 +34,7 @@ private:
      @param lambda polarization (2*spin z coponent)
   */
   static dcomplex e_(int i, int lambda);
+  static dcomplex e_(int i, halfint lambda);
 };
 
 /**
