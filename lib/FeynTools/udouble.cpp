@@ -17,6 +17,10 @@ double udouble::get_rel_uncert() const {
   return rel_uncert;
 }
 
+double udouble::get_uncert() const {
+  return rel_uncert * value;
+}
+
 double udouble::minimum() const {
   return value*(1. - rel_uncert);
 }

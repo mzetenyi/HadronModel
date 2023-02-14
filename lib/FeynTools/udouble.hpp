@@ -8,6 +8,7 @@ public:
   udouble(double value=0, double rel_uncert=0);
   double get_value() const;
   double get_rel_uncert() const;
+  double get_uncert() const;
   double minimum() const;
   double maximum() const;
   friend udouble operator*(double, const udouble&);
