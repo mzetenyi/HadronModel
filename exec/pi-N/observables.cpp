@@ -71,7 +71,7 @@ dcomplex Observable_Xsec_Dilepton_dM::operator()(halfint lap, halfint la) const 
   return obs(lap,la);
 }
 
-Observable_Xsec_Pionpair_dcosth_dphi::Observable_Xsec_Pionpair_dcosth_dphi(double M, double costh, double phi) :
+Observable_Xsec_Pionpair_dM_dcosth_dphi::Observable_Xsec_Pionpair_dM_dcosth_dphi(double M, double costh, double phi) :
   M(M),
   costh(costh),
   phi(phi),
@@ -100,11 +100,11 @@ Observable_Xsec_Pionpair_dcosth_dphi::Observable_Xsec_Pionpair_dcosth_dphi(doubl
   obs(-_1,-_1) =   fac * (1. - costh*costh);
 }
 
-dcomplex Observable_Xsec_Pionpair_dcosth_dphi::operator()(halfint lap, halfint la) const {
+dcomplex Observable_Xsec_Pionpair_dM_dcosth_dphi::operator()(halfint lap, halfint la) const {
   return obs(lap,la);
 }
 
-Observable_Xsec_Pionpair_dcosth::Observable_Xsec_Pionpair_dcosth(double M, double costh) :
+Observable_Xsec_Pionpair_dM_dcosth::Observable_Xsec_Pionpair_dM_dcosth(double M, double costh) :
   M(M),
   costh(costh),
   obs(idx_s1,idx_s1) {
@@ -132,11 +132,11 @@ Observable_Xsec_Pionpair_dcosth::Observable_Xsec_Pionpair_dcosth(double M, doubl
   obs(-_1,-_1) = fac * (1. - costh*costh);
 }
 
-dcomplex Observable_Xsec_Pionpair_dcosth::operator()(halfint lap, halfint la) const {
+dcomplex Observable_Xsec_Pionpair_dM_dcosth::operator()(halfint lap, halfint la) const {
   return obs(lap,la);
 }
 
-Observable_Xsec_Pionpair::Observable_Xsec_Pionpair(double M) :
+Observable_Xsec_Pionpair_dM::Observable_Xsec_Pionpair_dM(double M) :
   M(M),
   obs(idx_s1,idx_s1) {
   double phfac = 1./(32.*pi_*pi_); // (2*pi)^4 * two-body phase-space
@@ -162,7 +162,7 @@ Observable_Xsec_Pionpair::Observable_Xsec_Pionpair(double M) :
   obs(-_1,-_1) = fac;
 }
 
-dcomplex Observable_Xsec_Pionpair::operator()(halfint lap, halfint la) const {
+dcomplex Observable_Xsec_Pionpair_dM::operator()(halfint lap, halfint la) const {
   return obs(lap,la);
 }
 

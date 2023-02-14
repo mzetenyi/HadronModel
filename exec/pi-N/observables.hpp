@@ -37,10 +37,10 @@ private:
   MultiArray<dcomplex> obs; 
 };
 
-class Observable_Xsec_Pionpair_dcosth_dphi {
+class Observable_Xsec_Pionpair_dM_dcosth_dphi {
 public:
-  Observable_Xsec_Pionpair_dcosth_dphi() = delete;
-  Observable_Xsec_Pionpair_dcosth_dphi(double M, double costh, double phi);
+  Observable_Xsec_Pionpair_dM_dcosth_dphi() = delete;
+  Observable_Xsec_Pionpair_dM_dcosth_dphi(double M, double costh, double phi);
   dcomplex operator()(halfint lap, halfint la) const;
 private:
   double M;
@@ -49,10 +49,10 @@ private:
   MultiArray<dcomplex> obs; 
 };
 
-class Observable_Xsec_Pionpair_dcosth {
+class Observable_Xsec_Pionpair_dM_dcosth {
 public:
-  Observable_Xsec_Pionpair_dcosth() = delete;
-  Observable_Xsec_Pionpair_dcosth(double M, double costh);
+  Observable_Xsec_Pionpair_dM_dcosth() = delete;
+  Observable_Xsec_Pionpair_dM_dcosth(double M, double costh);
   dcomplex operator()(halfint lap, halfint la) const;
 private:
   double M;
@@ -60,10 +60,10 @@ private:
   MultiArray<dcomplex> obs; 
 };
 
-class Observable_Xsec_Pionpair {
+class Observable_Xsec_Pionpair_dM {
 public:
-  Observable_Xsec_Pionpair() = delete;
-  Observable_Xsec_Pionpair(double M);
+  Observable_Xsec_Pionpair_dM() = delete;
+  Observable_Xsec_Pionpair_dM(double M);
   dcomplex operator()(halfint lap, halfint la) const;
 private:
   double M;
