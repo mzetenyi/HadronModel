@@ -1,0 +1,14 @@
+../../../build/exec/pi-N/piN_Npipi load[../../../lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 \
+     Born N1520 N1440 N1535 dM=0.005 res_rhophase=90 rho > ../results/piN_Npipi_dsig_dM_srt1.49_all_90deg
+
+../../../build/exec/pi-N/piN_Npipi load[../../../lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 \
+     Born dM=0.005 rho > ../results/piN_Npipi_dsig_dM_srt1.49_Born
+
+../../../build/exec/pi-N/piN_Npipi load[../../../lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 \
+     N1520 dM=0.005 rho > ../results/piN_Npipi_dsig_dM_srt1.49_N1520
+
+../../../build/exec/pi-N/piN_Npipi load[../../../lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 \
+     N1535 dM=0.005 rho > ../results/piN_Npipi_dsig_dM_srt1.49_N1535
+
+../../../build/exec/pi-N/piN_Npipi load[../../../lib/ELModel/model_params] dsig_dM srt=1.49 cutoff=ZM rhospec=0 \
+     N1440 dM=0.005 rho > ../results/piN_Npipi_dsig_dM_srt1.49_N1440
