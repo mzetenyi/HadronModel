@@ -5,8 +5,6 @@ piN_elastic.hpp)
 
 target_include_directories(piN_elastic PUBLIC ../../lib/FeynTools ../../lib/ELModel)
 
-target_compile_features(piN_elastic PRIVATE cxx_std_17)
-
 target_link_libraries(piN_elastic ELModel)
 target_link_libraries(piN_elastic FeynTools)
 
@@ -14,8 +12,6 @@ add_executable(R_piN_decay Amplitude_R_piN.cpp R_piN_decay.cpp R_piN_decay_main.
 R_piN_decay.hpp)
 
 target_include_directories(R_piN_decay PUBLIC ../../lib/FeynTools ../../lib/ELModel)
-
-target_compile_features(R_piN_decay PRIVATE cxx_std_17)
 
 target_link_libraries(R_piN_decay ELModel)
 target_link_libraries(R_piN_decay FeynTools)
