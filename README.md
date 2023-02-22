@@ -18,6 +18,8 @@ Some of the executables are:
 ### Download
 Navigate to the [main page of the project](https://github.com/mzetenyi/HadronModel), click on the green "Code" button and choose **"Download zip"**. Save the zip file to a suitable directory, unzip it, and you will get a directiry structure like this:
 
+![Directories](https://user-images.githubusercontent.com/43382422/220627571-33fd9b92-198a-4633-8c0c-6331880fbb33.jpg)
+
 ### Compile
 
 #### **prerequisites**
