@@ -87,6 +87,6 @@ This executable is an event generator for contributions of a $\rho$ meson to pio
 
 A typical command to run the code, issued in the main directory of the project:
 ```
-./build/exec/pi-N/piN_Npipi_generator load[lib/ELModel/model_params] srt=1.49 res_rhophase=90 Born N1520 Ngen=10 > my_output
+./build/exec/pi-N/piN_Npipi_generator load[lib/ELModel/model_params] srt=1.49 res_rhophase=90 Born N1520 Ngen=1000 > my_output
 ```
-This will generate 10 events of pion pair production at CM energy $\sqrt{s}=10\, \text{GeV}$, including the Born and $N(1520)$ channels with an extra relative phase of $90^\circ$, and write the results in the file `my_output`.
+This will generate 1000 events of pion pair production at CM energy $\sqrt{s}=1.49\, \text{GeV}$, including the Born and $N(1520)$ channels with an extra relative phase of $90^\circ$, and write the results in the file `my_output`.
