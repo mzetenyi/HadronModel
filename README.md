@@ -66,7 +66,7 @@ The special option `load[<path_to_options_file>]` loads the given file that shou
   <key2> = <value2>
 }
 ```
-Options in files can be overridden on the command line, for grouped parameters use the syntax `<group>.<key1>=<value1>`.
+Options in files can be overridden on the command line, for grouped parameters use the syntax `<group>.<key1>=<value1>`. Command line options are read in left to right, options read in later always override previously read-in values of the same option.
 
 ### piN_Npipi_generator
 
