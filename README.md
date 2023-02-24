@@ -43,3 +43,22 @@ where `<target_name>` is the name of one of the executables listed above, e.g. `
 > cmake --build .
 ```
 During compilation some warnings are issued which you can ignore.
+
+## Executables
+
+Executables are run from the command line and write the results to standard output that the user should redirect to a file. Parameters are specified via various command line options.
+
+There are two types of options:
+1. flags, e.g. for chosing the output type or swiching reaction channels on and off
+2. parameters with values given in the `<key>=<value>` format (spaces around the = sign are NOT allowed!).
+
+The special option `load[<path_to_options_file>]` loads the given file that should contain one option specification per line, an example is [the file specifying the model parameters](https://github.com/mzetenyi/HadronModel/blob/main/lib/ELModel/model_params). Observe the comment syntax `//`, and the possibility for grouping the options using the syntax
+```
+<gruop> {
+  <key1> = <value1>
+  <key2> = <value2>
+}
+```
+Options in files can be overridden on the command line, for grouped parameters use the syntax `<group>.<key1>=<value1>`.
+
+### piN_Npipi_generator
