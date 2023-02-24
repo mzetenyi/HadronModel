@@ -44,6 +44,11 @@ where `<target_name>` is the name of one of the executables listed above, e.g. `
 ```
 During compilation some warnings are issued which you can ignore.
 
+In the build directory, the folder structure of the project is repeated with source files replaced by the corresponding executables. E.g. the executable for the $\pi\pi$ event generator can be found here:
+```
+HadronModel-main/build/exec/pi-N/piN_Npipi_generator
+```
+
 ## Executables
 
 Executables are run from the command line and write the results to standard output that the user should redirect to a file. Parameters are specified via various command line options.
@@ -62,3 +67,24 @@ The special option `load[<path_to_options_file>]` loads the given file that shou
 Options in files can be overridden on the command line, for grouped parameters use the syntax `<group>.<key1>=<value1>`.
 
 ### piN_Npipi_generator
+
+This executable is an event generator for contributions of a $\rho$ meson to pion pair production in pion-nucleon collisions, i.e. the process $\pi^- + p \to n +\rho \to n + \pi^+ + \pi^-$.
+
+### Options
+#### **Options with values:**
+
+**srt:** The CM energy, $\sqrt{s}$ given in GeV.
+
+**Ngen:** The number of generated events.
+
+**res_rhophase:** An extra phase factor for all baryon resonance contributions with respect to the Born term. Given in degrees.
+
+#### **Flags:**
+
+**flags for channels:** The following options can be used to switch on the corresponding reaction channel: `Born`, `N1440`, `N1520` , `N1535`, `N1650`, `N1675`, `N1680`, `N1710`, `D1600`, `D1620`.
+
+A typical command to run the code, issued in the main directory of the project:
+```
+./build/exec/pi-N/piN_Npipi_generator load[lib/ELModel/model_params] srt=1.49 res_rhophase=90 Born N1520 Ngen=10 > my_output
+```
+This will generate 10 events of pion pair production at CM energy $\sqrt{s}=10\, \text{GeV}$, including the Born and $N(1520)$ channels with an extra relative phase of $90^\circ$, and write the results in the file `my_output`.
