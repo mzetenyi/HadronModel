@@ -49,6 +49,7 @@ In the build directory, the folder structure of the project is repeated with sou
 HadronModel-main/build/exec/pi-N/piN_Npipi_generator
 ```
 The dirctory structure of the project looks like the following after compilation:
+![Directiries2](https://user-images.githubusercontent.com/43382422/221149994-5b1ddf68-125d-41d6-9bbd-c9dcff99e071.jpg)
 
 ## Executables
 
